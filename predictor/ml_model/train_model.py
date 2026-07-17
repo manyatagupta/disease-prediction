@@ -43,12 +43,14 @@ def train_and_save_model():
         )
     print("Database populated successfully.")
     
-    print("Preparing data for training on the FULL dataset...")
+    print("Preparing data for training on the FULL dataset (memory optimized)...")
     X = df.drop(columns=['diseases'])
     y = df['diseases']
     
-    print("Training Random Forest model (this may take a moment)...")
-    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
+    print("Training Random Forest model (this may take a few minutes)...")
+    # Using n_jobs=1 (default) instead of -1 prevents MemoryError from multiprocessing.
+    # Limiting n_estimators and max_depth also strictly bounds memory usage.
+    clf = RandomForestClassifier(n_estimators=50, max_depth=50, random_state=42)
     clf.fit(X, y)
     
     print(f"Model accuracy on training sample: {clf.score(X, y):.2f}")
