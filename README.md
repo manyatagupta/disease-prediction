@@ -68,5 +68,10 @@ python manage.py runserver
 ```
 Visit `http://127.0.0.1:8000` in your browser to access the application.
 
+## Troubleshooting
+
+* **MemoryError during training**: If you experience memory exhaustion while running `train_model.py`, the script is designed to safely sample 50,000 rows. Do not modify `n_jobs` to `-1` unless you have ample RAM.
+* **Port already in use**: If Django fails to start on port 8000, run it on a different port using `python manage.py runserver 8001`.
+
 ## Disclaimer
 *This tool is for informational and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a physician or other qualified health provider with any questions regarding a medical condition.*
