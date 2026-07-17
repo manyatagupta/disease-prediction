@@ -45,26 +45,27 @@ def checker_view(request):
         input_df = pd.DataFrame([input_data], columns=all_symptoms)
         
         # Predict
-        prediction = clf.predict(input_df)[0]
+        predicted_disease = clf.predict(input_df)[0]
         probabilities = clf.predict_proba(input_df)[0]
-        confidence = max(probabilities) * 100
+        confidence_score = round(max(probabilities) * 100, 2)
         
-        # Fetch disease info
-        disease = Disease.objects.filter(name=prediction).first()
+        low_confidence_warning = confidence_score < 30.0
         
-        # Save to history
-        PredictionHistory.objects.create(
-            user=request.user,
-            symptoms_selected=", ".join(selected_symptoms),
-            predicted_disease=prediction,
-            confidence=confidence
-        )
+        disease_obj = Disease.objects.filter(name=predicted_disease).first()
         
+        if request.user.is_authenticated:
+            PredictionHistory.objects.create(
+                user=request.user,
+                predicted_disease=predicted_disease,
+                confidence_score=confidence_score,
+                symptoms_submitted=", ".join(selected_symptoms)
+            )
+            
         context = {
-            'predicted_disease': prediction,
-            'confidence': round(confidence, 2),
-            'disease': disease,
-            'selected_symptoms': selected_symptoms
+            'predicted_disease': predicted_disease,
+            'confidence_score': confidence_score,
+            'disease_info': disease_obj,
+            'low_confidence_warning': low_confidence_warning
         }
         return render(request, 'predictor/results.html', context)
         
