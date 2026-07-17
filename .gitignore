@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+.env
+predictor/ml_model/model.pkl
+predictor/ml_model/symptoms_list.pkl

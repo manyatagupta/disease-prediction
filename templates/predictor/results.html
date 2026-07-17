@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction Results - MediPredict AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="glass-card">
+        <div class="result-header">
+            <h3 style="color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">AI Prediction</h3>
+            <h2 class="text-gradient" style="font-size: 3rem; margin: 0.5rem 0;">{{ predicted_disease }}</h2>
+            
+            <div style="margin-top: 1.5rem;">
+                <span style="font-weight: 600; font-size: 1.125rem;">Confidence Score: {{ confidence }}%</span>
+                <div class="confidence-meter">
+                    <div class="confidence-fill" style="width: {{ confidence }}%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Description</h3>
+            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease.description|default:"No description available." }}</p>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">Precautions</h3>
+            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease.precautions|default:"No precautions listed." }}</p>
+        </div>
+        
+        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px;">
+            <h3 style="margin-bottom: 0.5rem;">Recommended Specialist</h3>
+            <p style="font-size: 1.125rem; font-weight: 600; color: #60a5fa;">{{ disease.recommended_doctor|default:"General Physician" }}</p>
+        </div>
+        
+        <div style="margin-top: 3rem; display: flex; justify-content: space-between; align-items: center;">
+            <a href="{% url 'predictor:checker' %}" class="btn btn-secondary">&larr; Check Again</a>
+            <a href="{% url 'predictor:history' %}" class="btn btn-primary">View History</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

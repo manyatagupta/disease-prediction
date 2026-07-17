@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction History - MediPredict AI{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 class="text-gradient" style="margin: 0;">Your History</h2>
+        <a href="{% url 'predictor:checker' %}" class="btn btn-primary">New Prediction</a>
+    </div>
+    
+    {% if history %}
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Symptoms Selected</th>
+                    <th>Predicted Disease</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in history %}
+                <tr>
+                    <td style="color: var(--text-muted);">{{ item.date|date:"M d, Y H:i" }}</td>
+                    <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.symptoms_selected }}">
+                        {{ item.symptoms_selected }}
+                    </td>
+                    <td style="font-weight: 600; color: var(--text-main);">{{ item.predicted_disease }}</td>
+                    <td>
+                        <span style="padding: 0.25rem 0.5rem; background: rgba(16, 185, 129, 0.1); color: #34d399; border-radius: 4px; font-size: 0.875rem;">
+                            {{ item.confidence|floatformat:1 }}%
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem 0; color: var(--text-muted);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity: 0.5; margin-bottom: 1rem;">
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+            <path d="M12 8v4l3 3"/>
+        </svg>
+        <p>You haven't made any predictions yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

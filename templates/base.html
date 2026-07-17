@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Disease Predictor{% endblock %}</title>
+    <meta name="description" content="AI-powered disease prediction and symptom analysis tool.">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'predictor:home' %}" class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            <span>MediPredict</span> AI
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'predictor:home' %}" class="nav-link">Home</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'predictor:checker' %}" class="nav-link">Symptom Checker</a>
+                <a href="{% url 'predictor:history' %}" class="nav-link">My History</a>
+                <span style="color: var(--text-muted); margin: 0 0.5rem;">|</span>
+                <span class="nav-link" style="color: var(--secondary);">{{ user.username }}</span>
+                <a href="{% url 'accounts:logout' %}" class="nav-link">Logout</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 MediPredict AI. All rights reserved. <br> <small style="opacity: 0.5;">Disclaimer: This tool is for informational purposes only and does not substitute professional medical advice.</small></p>
+    </footer>
+</body>
+</html>

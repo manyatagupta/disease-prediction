@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Symptom Checker - MediPredict AI{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h2 class="text-gradient">Symptom Checker</h2>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">Select all the symptoms you are currently experiencing. Please be as accurate as possible for the best prediction.</p>
+    
+    <form method="POST" action="{% url 'predictor:checker' %}">
+        {% csrf_token %}
+        <div class="symptom-grid">
+            {% for symptom in symptoms %}
+            <label class="symptom-item">
+                <input type="checkbox" name="symptoms" value="{{ symptom.name }}" class="symptom-checkbox">
+                <span>{{ symptom.name }}</span>
+            </label>
+            {% endfor %}
+        </div>
+        
+        <div style="text-align: right; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1rem;">
+            <button type="reset" class="btn btn-secondary" style="margin-right: 1rem;">Clear All</button>
+            <button type="submit" class="btn btn-primary">Predict Disease</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

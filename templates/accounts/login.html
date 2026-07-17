@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - MediPredict AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 4rem auto; text-align: center;">
+    <div class="glass-card">
+        <h2 class="text-gradient">Welcome Back</h2>
+        <p class="hero-subtitle" style="font-size: 1rem; margin-bottom: 2rem;">Log in to access your prediction history.</p>
+        
+        <form method="POST" style="text-align: left;">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input type="{{ field.widget_type }}" name="{{ field.html_name }}" class="form-control" id="{{ field.id_for_label }}" required>
+                {% if field.errors %}
+                    <small style="color: #f87171;">{{ field.errors.0 }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
+        </form>
+        
+        <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
+            Don't have an account? <a href="{% url 'accounts:signup' %}" style="color: var(--primary); text-decoration: none;">Sign up</a>
+        </p>
+    </div>
+</div>
+{% endblock content %}

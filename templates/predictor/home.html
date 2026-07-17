@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 4rem;">
+    <h1 class="hero-title">Predict Your Health with <br><span class="text-gradient">AI Precision</span></h1>
+    <p class="hero-subtitle" style="margin-left: auto; margin-right: auto;">
+        Our advanced Machine Learning model analyzes your symptoms to provide accurate disease predictions, precautions, and recommended specialists in seconds.
+    </p>
+    
+    <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 1rem;">
+        <a href="{% url 'predictor:checker' %}" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">Start Symptom Checker</a>
+        <a href="#how-it-works" class="btn btn-secondary" style="font-size: 1.125rem; padding: 1rem 2rem;">Learn More</a>
+    </div>
+</div>
+
+<div id="how-it-works" style="margin-top: 6rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+    <div class="glass-card">
+        <h3 style="color: var(--primary);">1. Input Symptoms</h3>
+        <p style="color: var(--text-muted);">Select from a comprehensive list of symptoms you are currently experiencing.</p>
+    </div>
+    <div class="glass-card">
+        <h3 style="color: var(--secondary);">2. AI Analysis</h3>
+        <p style="color: var(--text-muted);">Our Random Forest model processes the data against patterns to find the best match.</p>
+    </div>
+    <div class="glass-card">
+        <h3 style="color: #8b5cf6;">3. Get Results</h3>
+        <p style="color: var(--text-muted);">Receive instant predictions along with confidence scores and actionable health advice.</p>
+    </div>
+</div>
+{% endblock content %}
