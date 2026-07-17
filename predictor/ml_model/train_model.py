@@ -47,11 +47,17 @@ def train_and_save_model():
     X = df.drop(columns=['diseases'])
     y = df['diseases']
     
+    import time
+    start_time = time.time()
+    
     print("Training Random Forest model (this may take a few minutes)...")
     # Using n_jobs=1 (default) instead of -1 prevents MemoryError from multiprocessing.
     # Limiting n_estimators and max_depth also strictly bounds memory usage.
     clf = RandomForestClassifier(n_estimators=50, max_depth=50, random_state=42)
     clf.fit(X, y)
+    
+    end_time = time.time()
+    print(f"Model trained in {end_time - start_time:.2f} seconds.")
     
     print(f"Model accuracy on training sample: {clf.score(X, y):.2f}")
     
