@@ -20,11 +20,10 @@
             </div>
             {% endfor %}
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
+                Don't have an account? <a href="{% url 'accounts:signup' %}" style="color: var(--primary); text-decoration: none;">Sign up here</a>
+            </p>
         </form>
-        
-        <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
-            Don't have an account? <a href="{% url 'accounts:signup' %}" style="color: var(--primary); text-decoration: none;">Sign up</a>
-        </p>
     </div>
 </div>
 {% endblock content %}
