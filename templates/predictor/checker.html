@@ -5,13 +5,18 @@
 {% block content %}
 <div class="glass-card">
     <h2 class="text-gradient">Symptom Checker</h2>
-    <p style="color: var(--text-muted); margin-bottom: 2rem;">Select all the symptoms you are currently experiencing. Please be as accurate as possible for the best prediction.</p>
+    <p style="color: var(--text-muted); margin-bottom: 1rem;">Select all the symptoms you are currently experiencing. Please be as accurate as possible for the best prediction.</p>
+    
+    <div style="margin-bottom: 2rem;">
+        <input type="text" id="symptomSearch" placeholder="🔍 Search symptoms (e.g., headache, fever)..." 
+               style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); color: white; outline: none; transition: border-color 0.3s ease;">
+    </div>
     
     <form method="POST" action="{% url 'predictor:checker' %}">
         {% csrf_token %}
-        <div class="symptom-grid">
+        <div class="symptom-grid" id="symptomsList">
             {% for symptom in symptoms %}
-            <label class="symptom-item">
+            <label class="symptom-item" data-name="{{ symptom.name|lower }}">
                 <input type="checkbox" name="symptoms" value="{{ symptom.name }}" class="symptom-checkbox">
                 <span>{{ symptom.name }}</span>
             </label>
@@ -24,4 +29,35 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('symptomSearch');
+    const symptomLabels = document.querySelectorAll('.symptom-item');
+
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        
+        symptomLabels.forEach(label => {
+            const symptomName = label.getAttribute('data-name');
+            if (symptomName.includes(searchTerm)) {
+                label.style.display = 'flex';
+            } else {
+                label.style.display = 'none';
+            }
+        });
+    });
+    
+    // Focus effect on search input
+    searchInput.addEventListener('focus', function() {
+        this.style.borderColor = 'var(--primary)';
+        this.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.2)';
+    });
+    
+    searchInput.addEventListener('blur', function() {
+        this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        this.style.boxShadow = 'none';
+    });
+});
+</script>
 {% endblock content %}

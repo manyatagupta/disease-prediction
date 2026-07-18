@@ -49,6 +49,15 @@ def checker_view(request):
         probabilities = clf.predict_proba(input_df)[0]
         confidence_score = round(max(probabilities) * 100, 2)
         
+        # Get Top 5 Probabilities for Chart.js
+        import json
+        class_probs = list(zip(clf.classes_, probabilities))
+        class_probs.sort(key=lambda x: x[1], reverse=True)
+        top_5 = class_probs[:5]
+        
+        chart_labels = json.dumps([x[0] for x in top_5])
+        chart_data = json.dumps([round(x[1] * 100, 2) for x in top_5])
+        
         low_confidence_warning = confidence_score < 30.0
         
         disease_obj = Disease.objects.filter(name=predicted_disease).first()
@@ -65,7 +74,10 @@ def checker_view(request):
             'predicted_disease': predicted_disease,
             'confidence_score': confidence_score,
             'disease_info': disease_obj,
-            'low_confidence_warning': low_confidence_warning
+            'low_confidence_warning': low_confidence_warning,
+            'chart_labels': chart_labels,
+            'chart_data': chart_data,
+            'selected_symptoms': selected_symptoms
         }
         return render(request, 'predictor/results.html', context)
         

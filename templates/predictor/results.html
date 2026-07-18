@@ -4,38 +4,115 @@
 
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto;">
-    <div class="glass-card">
-        <div class="result-header">
+    <div class="glass-card" id="report-card">
+        <div class="result-header" style="position: relative;">
+            <button onclick="window.print()" class="btn btn-secondary" style="position: absolute; right: 0; top: 0; padding: 0.5rem 1rem;">🖨️ Print Report</button>
             <h3 style="color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">AI Prediction</h3>
             <h2 class="text-gradient" style="font-size: 3rem; margin: 0.5rem 0;">{{ predicted_disease }}</h2>
             
+            {% if low_confidence_warning %}
+            <div class="alert alert-warning" style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #eab308; padding: 1rem; margin-top: 1rem; border-radius: 4px;">
+                <strong>Warning:</strong> The AI confidence score is quite low. This could mean your symptoms are very generalized or don't strongly match a specific condition in our database.
+            </div>
+            {% endif %}
+
             <div style="margin-top: 1.5rem;">
-                <span style="font-weight: 600; font-size: 1.125rem;">Confidence Score: {{ confidence }}%</span>
+                <span style="font-weight: 600; font-size: 1.125rem;">Confidence Score: {{ confidence_score }}%</span>
                 <div class="confidence-meter">
-                    <div class="confidence-fill" style="width: {{ confidence }}%;"></div>
+                    <div class="confidence-fill" style="width: {{ confidence_score }}%;"></div>
                 </div>
             </div>
         </div>
         
         <div style="margin-top: 2rem;">
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Alternative Possibilities</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">The model also considered the following conditions:</p>
+            <canvas id="probChart" width="400" height="200"></canvas>
+        </div>
+
+        <div style="margin-top: 2rem;">
             <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Description</h3>
-            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease.description|default:"No description available." }}</p>
+            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease_info.description|default:"No description available." }}</p>
         </div>
         
         <div style="margin-top: 2rem;">
             <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">Precautions</h3>
-            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease.precautions|default:"No precautions listed." }}</p>
+            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease_info.precautions|default:"No precautions listed." }}</p>
         </div>
         
         <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px;">
             <h3 style="margin-bottom: 0.5rem;">Recommended Specialist</h3>
-            <p style="font-size: 1.125rem; font-weight: 600; color: #60a5fa;">{{ disease.recommended_doctor|default:"General Physician" }}</p>
+            <p style="font-size: 1.125rem; font-weight: 600; color: #60a5fa;">{{ disease_info.recommended_doctor|default:"General Physician" }}</p>
         </div>
         
-        <div style="margin-top: 3rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="margin-top: 3rem; display: flex; justify-content: space-between; align-items: center;" class="no-print">
             <a href="{% url 'predictor:checker' %}" class="btn btn-secondary">&larr; Check Again</a>
             <a href="{% url 'predictor:history' %}" class="btn btn-primary">View History</a>
         </div>
     </div>
 </div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('probChart').getContext('2d');
+        const labels = JSON.parse('{{ chart_labels|safe }}');
+        const data = JSON.parse('{{ chart_data|safe }}');
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Confidence (%)',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.6)', // Primary Blue
+                        'rgba(16, 185, 129, 0.6)', // Secondary Green
+                        'rgba(245, 158, 11, 0.6)', // Amber
+                        'rgba(239, 68, 68, 0.6)',  // Red
+                        'rgba(139, 92, 246, 0.6)'  // Purple
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(139, 92, 246, 1)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: '#9ca3af' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#9ca3af' },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    @media print {
+        body { background: white; color: black; }
+        .navbar, .no-print, button { display: none !important; }
+        .glass-card { background: none; border: none; box-shadow: none; filter: none; padding: 0; }
+        .text-gradient { background: none; -webkit-text-fill-color: black; }
+    }
+</style>
 {% endblock content %}
