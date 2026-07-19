@@ -1,34 +1,91 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="alert alert-info text-center glass-card" style="padding: 10px; margin-bottom: 2rem;">
-    <strong>✨ AI-Powered:</strong> Now trained on over 246,000 medical records and 773 unique diseases.
-</div>
+<!-- Decorative Background Elements -->
+<div class="hero-bg-glow glow-1"></div>
+<div class="hero-bg-glow glow-2"></div>
 
-<div style="text-align: center; margin-top: 4rem;">
+<div class="hero-container fade-in-up">
+    <div class="alert alert-info text-center glass-card pulse-soft" style="display: inline-block; padding: 0.5rem 1.5rem; margin-bottom: 2rem; border-radius: 9999px;">
+        <strong>✨ AI-Powered:</strong> Now trained on over 246,000 medical records and 773 unique diseases.
+    </div>
+
     <h1 class="hero-title">Predict Your Health with <br><span class="text-gradient">AI Precision</span></h1>
     <p class="hero-subtitle" style="margin-left: auto; margin-right: auto;">
-        Our advanced Machine Learning model analyzes your symptoms to provide accurate disease predictions, precautions, and recommended specialists in seconds.
+        Empower yourself with our advanced Machine Learning model. Analyze your symptoms to receive highly accurate disease predictions, personalized precautions, and recommended specialists in seconds.
     </p>
     
-    <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 1rem;">
-        <a href="{% url 'predictor:checker' %}" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">Start Symptom Checker</a>
-        <a href="#how-it-works" class="btn btn-secondary" style="font-size: 1.125rem; padding: 1rem 2rem;">Learn More</a>
+    <div class="hero-buttons">
+        <a href="{% url 'predictor:checker' %}" class="btn btn-primary btn-lg shine-effect">
+            Start Symptom Checker
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px; vertical-align: -4px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <a href="#how-it-works" class="btn btn-secondary btn-lg">Learn More</a>
+    </div>
+    
+    <div class="hero-stats" style="margin-top: 4rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
+        <div class="stat-item">
+            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 0;">99%</h2>
+            <p style="color: var(--text-muted); font-weight: 500; margin-top: 0.25rem;">Accuracy</p>
+        </div>
+        <div class="stat-item">
+            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 0; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">130+</h2>
+            <p style="color: var(--text-muted); font-weight: 500; margin-top: 0.25rem;">Symptoms</p>
+        </div>
+        <div class="stat-item">
+            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 0; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">24/7</h2>
+            <p style="color: var(--text-muted); font-weight: 500; margin-top: 0.25rem;">Availability</p>
+        </div>
     </div>
 </div>
 
-<div id="how-it-works" style="margin-top: 6rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-    <div class="glass-card">
-        <h3 style="color: var(--primary);">1. Input Symptoms</h3>
-        <p style="color: var(--text-muted);">Select from a comprehensive list of symptoms you are currently experiencing.</p>
+<section id="how-it-works" class="section fade-in-up" style="margin-top: 8rem; animation-delay: 0.2s; animation-fill-mode: both;">
+    <div style="text-align: center; margin-bottom: 4rem;">
+        <h2 style="font-size: 2.5rem;">How It <span class="text-gradient">Works</span></h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 1rem auto 0;">Three simple steps to understand your health better using the power of Artificial Intelligence.</p>
     </div>
-    <div class="glass-card">
-        <h3 style="color: var(--secondary);">2. AI Analysis</h3>
-        <p style="color: var(--text-muted);">Our Random Forest model processes the data against patterns to find the best match.</p>
+    
+    <div class="features-grid">
+        <div class="glass-card feature-card">
+            <div class="feature-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">1. Input Symptoms</h3>
+            <p style="color: var(--text-muted);">Select from a comprehensive list of symptoms you are currently experiencing. Our intuitive interface makes it easy to find exactly how you're feeling.</p>
+        </div>
+        
+        <div class="glass-card feature-card">
+            <div class="feature-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--secondary);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><polyline points="10 10 12 12 14 10"></polyline></svg>
+            </div>
+            <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">2. AI Analysis</h3>
+            <p style="color: var(--text-muted);">Our Random Forest machine learning model processes your symptoms against thousands of medical patterns to identify the best match instantly.</p>
+        </div>
+        
+        <div class="glass-card feature-card">
+            <div class="feature-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+            </div>
+            <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">3. Get Results</h3>
+            <p style="color: var(--text-muted);">Receive an instant disease prediction with confidence scores, actionable health advice, and recommended specialists to consult.</p>
+        </div>
     </div>
-    <div class="glass-card">
-        <h3 style="color: #8b5cf6;">3. Get Results</h3>
-        <p style="color: var(--text-muted);">Receive instant predictions along with confidence scores and actionable health advice.</p>
+</section>
+
+<section class="cta-section glass-card fade-in-up" style="margin-top: 8rem; text-align: center; padding: 4rem 2rem; position: relative; overflow: hidden; animation-delay: 0.4s; animation-fill-mode: both; margin-bottom: 4rem;">
+    <div style="position: relative; z-index: 1;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to take control of your health?</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; font-size: 1.125rem;">
+            Join thousands of users who are already using MediPredict AI to understand their symptoms better.
+        </p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'predictor:checker' %}" class="btn btn-primary btn-lg shine-effect" style="padding: 1.25rem 2.5rem; font-size: 1.125rem;">Go to Symptom Checker</a>
+        {% else %}
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-lg shine-effect" style="padding: 1.25rem 2.5rem; font-size: 1.125rem;">Create an Account for Free</a>
+        {% endif %}
     </div>
-</div>
+    <!-- Abstract background shape -->
+    <div style="position: absolute; right: -10%; top: -50%; width: 50%; height: 200%; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); z-index: 0; pointer-events: none;"></div>
+    <div style="position: absolute; left: -10%; bottom: -50%; width: 50%; height: 200%; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); z-index: 0; pointer-events: none;"></div>
+</section>
 {% endblock content %}
