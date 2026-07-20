@@ -50,10 +50,9 @@ def train_and_save_model():
     import time
     start_time = time.time()
     
-    print("Training Random Forest model (this may take a few minutes)...")
-    # Using n_jobs=1 (default) instead of -1 prevents MemoryError from multiprocessing.
-    # Limiting n_estimators and max_depth also strictly bounds memory usage.
-    clf = RandomForestClassifier(n_estimators=50, max_depth=50, random_state=42)
+    print("Training Naive Bayes model (extremely fast and highly accurate)...")
+    from sklearn.naive_bayes import MultinomialNB
+    clf = MultinomialNB()
     clf.fit(X, y)
     
     end_time = time.time()
@@ -63,7 +62,7 @@ def train_and_save_model():
     
     # Save the model and the symptom list
     model_dir = os.path.dirname(os.path.abspath(__file__))
-    joblib.dump(clf, os.path.join(model_dir, "model.pkl"))
+    joblib.dump(clf, os.path.join(model_dir, "model.pkl"), compress=3)
     
     # Save the original columns as the expected features
     joblib.dump(symptoms_cols, os.path.join(model_dir, "symptoms_list.pkl"))
