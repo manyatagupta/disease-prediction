@@ -1,52 +1,385 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AI Disease Predictor{% endblock %}</title>
-    <meta name="description" content="AI-powered disease prediction and symptom analysis tool.">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 12h-4l-3 9L9 3l-3 9H2'/></svg>">
+    <title>{% block title %}MediPredict AI{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0B1120',
+                        darker: '#020617',
+                        card: 'rgba(30, 41, 59, 0.7)',
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in-down': 'fadeInDown 0.5s ease-out'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 </head>
-<body>
-    <nav class="navbar">
-        <a href="{% url 'predictor:home' %}" class="nav-brand">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-            </svg>
-            <span>MediPredict</span> AI
-        </a>
-        <div class="nav-links">
-            <a href="{% url 'predictor:home' %}" class="nav-link">Home</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'predictor:checker' %}" class="nav-link">Symptom Checker</a>
-                <a href="{% url 'predictor:history' %}" class="nav-link">My History</a>
-                <span style="color: var(--text-muted); margin: 0 0.5rem;">|</span>
-                <span class="nav-link" style="color: var(--secondary);">{{ user.username }}</span>
-                <a href="{% url 'accounts:logout' %}" class="nav-link">Logout</a>
-            {% else %}
-                <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
-                <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Get Started</a>
-            {% endif %}
+<body class="bg-darker text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500/30 transition-colors duration-300">
+    
+    <!-- Background Gradients -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-600/10 blur-[120px]"></div>
+        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-emerald-600/10 blur-[120px]"></div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <!-- DASHBOARD LAYOUT -->
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800 flex flex-col hidden md:flex z-20">
+            <div class="p-6 border-b border-slate-800">
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                    <i class="fa-solid fa-notes-medical text-blue-500"></i> MediPredict
+                </a>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
+                <div class="pt-2 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Main</div>
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-border-all w-5 text-center text-slate-400 group-hover:text-blue-400 transition-colors"></i> Dashboard
+                </a>
+                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-stethoscope w-5 text-center text-slate-400 group-hover:text-emerald-400 transition-colors"></i> Predict Disease
+                </a>
+                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400 group-hover:text-purple-400 transition-colors"></i> History
+                </a>
+                
+                <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">AI Tools</div>
+                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-robot w-5 text-center text-slate-400 group-hover:text-blue-400 transition-colors"></i> AI Doctor
+                </a>
+                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-file-waveform w-5 text-center text-slate-400 group-hover:text-pink-400 transition-colors"></i> Report Analyzer
+                </a>
+                
+                <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Health</div>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-slate-400 group-hover:text-amber-400 transition-colors"></i> Analytics
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-hospital w-5 text-center text-slate-400 group-hover:text-red-400 transition-colors"></i> Hospitals
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                    <i class="fa-solid fa-gear w-5 text-center text-slate-400 group-hover:text-slate-200 transition-colors"></i> Settings
+                </a>
+            </div>
+            
+            <div class="p-4 border-t border-slate-800">
+                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden relative">
+            <!-- Top Navbar -->
+            <header class="h-16 bg-slate-900/40 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-4 sm:px-6 z-10">
+                <button class="md:hidden text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                
+                <!-- Search -->
+                <div class="hidden md:flex items-center bg-slate-800/50 rounded-full px-4 py-2 border border-slate-700/50 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all w-96 max-w-md">
+                    <i class="fa-solid fa-search text-slate-500 mr-2"></i>
+                    <input type="text" placeholder="Search diseases, symptoms, or reports..." class="bg-transparent border-none outline-none text-sm text-slate-200 w-full placeholder-slate-500 focus:ring-0">
+                </div>
+                <div class="md:hidden"></div>
+                
+                <!-- Right Actions -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <button class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors relative">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_#3b82f6]"></span>
+                    </button>
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+                        <i class="fa-regular fa-moon"></i>
+                    </button>
+                    <div class="flex items-center gap-3 pl-2 sm:pl-4 border-l border-slate-700 cursor-pointer group">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-emerald-400 flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-blue-500/20 transition-all">
+                            {{ user.username|make_list|first|upper }}
+                        </div>
+                        <span class="hidden md:block font-medium text-sm text-slate-300 group-hover:text-white transition-colors">{{ user.username }}</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 hidden md:block"></i>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Scrollable Content -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 scroll-smooth custom-scrollbar" id="main-content">
+                {% if messages %}
+                    <div class="mb-6 space-y-3 max-w-4xl mx-auto">
+                        {% for message in messages %}
+                            <div class="p-4 rounded-xl border backdrop-blur-md {% if message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-400{% else %}bg-blue-500/10 border-blue-500/20 text-blue-400{% endif %} flex items-center gap-3 animate-fade-in-down shadow-lg">
+                                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %} text-lg"></i>
+                                <span class="font-medium">{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="max-w-7xl mx-auto w-full">
+                    <!-- Dashboard block allows overriding content -->
+                    {% block dashboard_content %}{% endblock dashboard_content %}
+                </div>
+            </main>
+        </div>
+        
+    </div>
+    {% else %}
+    <!-- LANDING PAGE LAYOUT -->
+    <nav class="fixed w-full z-50 bg-slate-900/60 backdrop-blur-xl border-b border-slate-800 transition-all duration-300" id="landing-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                    <i class="fa-solid fa-notes-medical text-blue-500"></i> MediPredict <span class="text-white font-light text-xl">AI</span>
+                </a>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-slate-300 hover:text-white transition-colors font-medium">Features</a>
+                    <a href="#how-it-works" class="text-slate-300 hover:text-white transition-colors font-medium">How it Works</a>
+                    <a href="#ai-doctor" class="text-slate-300 hover:text-white transition-colors font-medium">AI Doctor</a>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'accounts:login' %}" class="text-slate-300 hover:text-white font-medium transition-colors hidden sm:block">Log in</a>
+                    <a href="{% url 'accounts:signup' %}" class="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:-translate-y-0.5">
+                        Get Started
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
-
-    <main class="container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        {% block content %}
-        {% endblock content %}
+    
+    <main class="flex-1 pt-20">
+        {% block content %}{% endblock content %}
     </main>
-
-    <footer>
-        <p>&copy; 2026 MediPredict AI. All rights reserved. <br> <small style="opacity: 0.5;">Disclaimer: This tool is for informational purposes only and does not substitute professional medical advice.</small></p>
+    
+    <footer class="border-t border-slate-800 bg-slate-950/80 py-12 mt-20 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <a href="{% url 'predictor:home' %}" class="flex items-center justify-center gap-2 text-xl font-bold text-white mb-6">
+                <i class="fa-solid fa-notes-medical text-blue-500"></i> MediPredict AI
+            </a>
+            <p class="text-slate-500 mb-6 max-w-md mx-auto">Empowering global healthcare with advanced Artificial Intelligence. Accurate, fast, and reliable.</p>
+            <p class="text-slate-600 text-sm">&copy; 2026 MediPredict AI. All rights reserved.</p>
+        </div>
     </footer>
+    {% endif %}
+
+    <!-- AI DOCTOR CHAT MODAL -->
+    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
+        <!-- Chat Header -->
+        <div class="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/50 rounded-t-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Grok AI Doctor</h4>
+                    <p class="text-xs text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Online</p>
+                </div>
+            </div>
+            <button id="closeAiChat" class="text-slate-400 hover:text-white transition-colors p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-900/50">
+            <!-- Initial AI Message -->
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
+                    <i class="fa-solid fa-robot text-xs"></i>
+                </div>
+                <div class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%]">
+                    Hello! I'm your Grok AI health assistant. You can ask me about your symptoms, get general precautions, or discuss your diet. How can I help you today?
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="p-3 border-t border-slate-700 bg-slate-800/50 rounded-b-2xl">
+            <form id="aiChatForm" class="flex items-center gap-2">
+                {% csrf_token %}
+                <input type="text" id="aiChatInput" placeholder="Type a medical question..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                <button type="submit" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-colors flex-shrink-0 shadow-[0_0_10px_rgba(37,99,235,0.3)]">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Floating AI Button (Visible when modal is closed) -->
+    <button id="openAiChat" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center text-xl z-40 transition-transform hover:scale-110">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50,
+        });
+        
+        // Dark mode toggle (UI only for now)
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+        }
+
+        // AI Chat Modal Logic
+        const aiChatModal = document.getElementById('aiChatModal');
+        const openAiChatBtn = document.getElementById('openAiChat');
+        const closeAiChatBtn = document.getElementById('closeAiChat');
+        const aiChatForm = document.getElementById('aiChatForm');
+        const aiChatInput = document.getElementById('aiChatInput');
+        const aiChatMessages = document.getElementById('aiChatMessages');
+        
+        // Define global function to open chat with optional initial message
+        window.openAIChat = function(initialMessage = null) {
+            aiChatModal.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
+            openAiChatBtn.classList.add('scale-0', 'opacity-0');
+            
+            if (initialMessage) {
+                aiChatInput.value = initialMessage;
+                aiChatForm.dispatchEvent(new Event('submit'));
+            }
+        };
+
+        if (openAiChatBtn && aiChatModal && closeAiChatBtn) {
+            openAiChatBtn.addEventListener('click', () => window.openAIChat());
+            
+            closeAiChatBtn.addEventListener('click', () => {
+                aiChatModal.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
+                openAiChatBtn.classList.remove('scale-0', 'opacity-0');
+            });
+        }
+        
+        if (aiChatForm) {
+            aiChatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = aiChatInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to UI
+                aiChatMessages.innerHTML += `
+                    <div class="flex items-start gap-3 flex-row-reverse">
+                        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white flex-shrink-0 mt-1 shadow-sm">
+                            <i class="fa-solid fa-user text-xs"></i>
+                        </div>
+                        <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[80%]">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                aiChatInput.value = '';
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                
+                // Add loading indicator
+                const loadingId = 'loading-' + Date.now();
+                aiChatMessages.innerHTML += `
+                    <div id="${loadingId}" class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-robot text-xs"></i>
+                        </div>
+                        <div class="bg-slate-800 text-slate-400 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%] flex items-center gap-2">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Grok is typing...
+                        </div>
+                    </div>
+                `;
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                
+                try {
+                    const response = await fetch('/ai/chat/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                    
+                    const data = await response.json();
+                    document.getElementById(loadingId).remove();
+                    
+                    if (data.success) {
+                        // Very simple markdown formatting to HTML
+                        let formattedText = data.response
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                            .replace(/\n/g, '<br>');
+                            
+                        aiChatMessages.innerHTML += `
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
+                                    <i class="fa-solid fa-robot text-xs"></i>
+                                </div>
+                                <div class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body">
+                                    ${formattedText}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        aiChatMessages.innerHTML += `
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0 mt-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                                </div>
+                                <div class="bg-slate-800 text-red-400 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%]">
+                                    Error: ${data.error}
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (err) {
+                    document.getElementById(loadingId).remove();
+                    aiChatMessages.innerHTML += `
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0 mt-1">
+                                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                            </div>
+                            <div class="bg-slate-800 text-red-400 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%]">
+                                Connection error. Please try again later.
+                            </div>
+                        </div>
+                    `;
+                }
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+            });
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
