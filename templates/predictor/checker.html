@@ -2,42 +2,184 @@
 
 {% block title %}Symptom Checker - MediPredict AI{% endblock %}
 
-{% block content %}
-<div class="glass-card">
-    <h2 class="text-gradient">Symptom Checker</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1rem;">Select all the symptoms you are currently experiencing. Please be as accurate as possible for the best prediction.</p>
+{% block dashboard_content %}
+<div class="animate-fade-in-down max-w-7xl mx-auto">
     
-    <div style="margin-bottom: 2rem;">
-        <input type="text" id="symptomSearch" placeholder="🔍 Search symptoms (e.g., headache, fever)..." 
-               style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); color: white; outline: none; transition: border-color 0.3s ease;">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">AI Symptom Checker</h1>
+        <p class="text-slate-400 max-w-2xl">Select the symptoms you are experiencing. Our advanced AI model will analyze them and predict the most likely condition.</p>
     </div>
-    
-    <form method="POST" action="{% url 'predictor:checker' %}">
-        {% csrf_token %}
-        <div class="symptom-grid" id="symptomsList">
-            {% for symptom in symptoms %}
-            <label class="symptom-item" data-name="{{ symptom.name|lower }}">
-                <input type="checkbox" name="symptoms" value="{{ symptom.name }}" class="symptom-checkbox">
-                <span>{{ symptom.name }}</span>
-            </label>
-            {% endfor %}
+
+    <div class="flex flex-col lg:flex-row gap-8">
+        
+        <!-- Form Section -->
+        <div class="w-full lg:w-1/2 flex flex-col gap-6">
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-xl">
+                
+                <form id="checkerForm" action="{% url 'predictor:checker' %}" method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- Search Input -->
+                    <div class="relative mb-6">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="symptomSearch" placeholder="Search symptoms (e.g., headache, fever)..." 
+                               class="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    </div>
+                    
+                    <!-- Selected Symptoms Badges -->
+                    <div id="selectedContainer" class="flex flex-wrap gap-2 mb-6 empty:hidden">
+                        <!-- Badges injected here via JS -->
+                    </div>
+
+                    <!-- Symptoms List -->
+                    <div class="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-4 h-96 overflow-y-auto custom-scrollbar mb-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="symptomsList">
+                            {% for symptom in symptoms %}
+                            <label class="symptom-item flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-slate-700 hover:bg-slate-800/50 cursor-pointer transition-all" data-name="{{ symptom.name|lower }}">
+                                <input type="checkbox" name="symptoms" value="{{ symptom.name }}" class="w-5 h-5 rounded border-slate-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-900 bg-slate-700 accent-blue-500 transition-all">
+                                <span class="text-slate-300 font-medium select-none">{{ symptom.name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Error Message Container -->
+                    <div id="errorAlert" class="hidden mb-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start gap-3">
+                        <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button type="button" id="clearBtn" class="text-slate-400 hover:text-white transition-colors text-sm font-medium px-4 py-2">
+                            Clear All
+                        </button>
+                        <button type="submit" id="submitBtn" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center gap-2 group">
+                            <span>Analyze Symptoms</span>
+                            <i class="fa-solid fa-wand-magic-sparkles group-hover:rotate-12 transition-transform"></i>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
         </div>
         
-        <div style="text-align: right; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1rem;">
-            <button type="reset" class="btn btn-secondary" style="margin-right: 1rem;" title="Uncheck all selected symptoms">Clear All</button>
-            <button type="submit" class="btn btn-primary" title="Submit selected symptoms for AI analysis">Predict Disease</button>
-        </div>
-    </form>
-</div>
+        <!-- Results Section -->
+        <div class="w-full lg:w-1/2 flex flex-col">
+            <!-- Initial State -->
+            <div id="resultPlaceholder" class="flex-1 bg-slate-900/50 backdrop-blur-xl border border-slate-800 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <div class="w-20 h-20 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-600 text-3xl mb-6">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Awaiting Symptoms</h3>
+                <p class="text-slate-500 max-w-sm">Select your symptoms on the left and click Analyze to receive an AI-powered prediction.</p>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="resultLoading" class="hidden flex-1 bg-slate-900/50 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] shadow-[0_0_30px_rgba(37,99,235,0.1)]">
+                <div class="relative w-24 h-24 mb-8">
+                    <div class="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-blue-400 text-2xl">
+                        <i class="fa-solid fa-brain animate-pulse"></i>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">Analyzing Patterns...</h3>
+                <p class="text-blue-400">Querying dataset of 246,000+ medical records.</p>
+            </div>
+            
+            <!-- Result Data -->
+            <div id="resultData" class="hidden flex-1 bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+                <!-- Abstract Glow -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-start justify-between mb-8">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-blue-500/20">AI Prediction</span>
+                                <span id="resSeverity" class="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-amber-500/20">Moderate</span>
+                            </div>
+                            <h2 id="resDisease" class="text-3xl md:text-4xl font-extrabold text-white">Disease Name</h2>
+                        </div>
+                        <div class="text-right">
+                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 shadow-inner">
+                                <span id="resConfidence" class="text-xl font-bold text-emerald-400">98%</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-2 font-medium">CONFIDENCE</div>
+                        </div>
+                    </div>
+                    
+                    <div id="resWarning" class="hidden mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
+                        <i class="fa-solid fa-circle-exclamation text-amber-400 mt-1"></i>
+                        <p class="text-amber-200/80 text-sm">Low confidence score. Your symptoms are generalized and may not strongly match a specific condition.</p>
+                    </div>
 
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-blue-500"></i> Description
+                            </h4>
+                            <p id="resDescription" class="text-slate-300 leading-relaxed"></p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/50">
+                                <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-shield-virus text-emerald-500"></i> Precautions
+                                </h4>
+                                <p id="resPrecautions" class="text-slate-300 text-sm leading-relaxed"></p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/50">
+                                <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-user-doctor text-purple-500"></i> Specialist
+                                </h4>
+                                <p id="resSpecialist" class="text-slate-300 text-sm leading-relaxed font-medium text-white"></p>
+                                <button class="mt-4 w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm text-white font-medium transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-location-dot"></i> Find Nearby
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Doctor CTA -->
+                        <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 flex items-center justify-between">
+                            <div>
+                                <h4 class="text-white font-semibold mb-1">Want more details?</h4>
+                                <p class="text-blue-200/70 text-sm">Discuss this result with Grok AI.</p>
+                            </div>
+                            <button id="askAiDoctorBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium shadow-lg transition-all">
+                                Ask AI Doctor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock dashboard_content %}
+
+{% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById('symptomSearch');
     const symptomLabels = document.querySelectorAll('.symptom-item');
-
+    const checkboxes = document.querySelectorAll('.symptom-checkbox');
+    const selectedContainer = document.getElementById('selectedContainer');
+    const clearBtn = document.getElementById('clearBtn');
+    const form = document.getElementById('checkerForm');
+    
+    // UI Elements for Results
+    const resPlaceholder = document.getElementById('resultPlaceholder');
+    const resLoading = document.getElementById('resultLoading');
+    const resData = document.getElementById('resultData');
+    
+    // Search functionality
     searchInput.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase().trim();
-        
         symptomLabels.forEach(label => {
             const symptomName = label.getAttribute('data-name');
             if (symptomName.includes(searchTerm)) {
@@ -48,16 +190,131 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
     
-    // Focus effect on search input
-    searchInput.addEventListener('focus', function() {
-        this.style.borderColor = 'var(--primary)';
-        this.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.2)';
+    // Update selected badges
+    function updateSelectedBadges() {
+        selectedContainer.innerHTML = '';
+        let count = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                count++;
+                const badge = document.createElement('div');
+                badge.className = 'px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-lg text-sm font-medium flex items-center gap-2 animate-fade-in-down';
+                badge.innerHTML = `
+                    ${cb.value}
+                    <button type="button" class="text-blue-400 hover:text-white remove-badge" data-value="${cb.value}">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+                selectedContainer.appendChild(badge);
+            }
+        });
+        
+        // Add event listeners to remove buttons
+        document.querySelectorAll('.remove-badge').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const val = this.getAttribute('data-value');
+                const targetCb = document.querySelector(`.symptom-checkbox[value="${val}"]`);
+                if (targetCb) {
+                    targetCb.checked = false;
+                    updateSelectedBadges();
+                }
+            });
+        });
+    }
+    
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectedBadges);
     });
     
-    searchInput.addEventListener('blur', function() {
-        this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        this.style.boxShadow = 'none';
+    clearBtn.addEventListener('click', () => {
+        checkboxes.forEach(cb => cb.checked = false);
+        updateSelectedBadges();
+    });
+    
+    // Form Submission (AJAX)
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const errorAlert = document.getElementById('errorAlert');
+        const errorText = document.getElementById('errorText');
+        errorAlert.classList.add('hidden');
+        
+        // Show Loading
+        resPlaceholder.classList.add('hidden');
+        resData.classList.add('hidden');
+        resLoading.classList.remove('hidden');
+        
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Populate Results
+                document.getElementById('resDisease').textContent = data.predicted_disease;
+                document.getElementById('resConfidence').textContent = `${data.confidence_score}%`;
+                document.getElementById('resSeverity').textContent = data.severity;
+                document.getElementById('resDescription').textContent = data.description;
+                document.getElementById('resPrecautions').textContent = data.precautions;
+                document.getElementById('resSpecialist').textContent = data.specialist;
+                
+                if (data.low_confidence) {
+                    document.getElementById('resWarning').classList.remove('hidden');
+                } else {
+                    document.getElementById('resWarning').classList.add('hidden');
+                }
+                
+                // Colorize confidence
+                const confEl = document.getElementById('resConfidence');
+                confEl.className = 'text-xl font-bold'; // Reset
+                if (data.confidence_score >= 80) confEl.classList.add('text-emerald-400');
+                else if (data.confidence_score >= 50) confEl.classList.add('text-amber-400');
+                else confEl.classList.add('text-red-400');
+                
+                // Bind AI Doctor Button
+                const askAiDoctorBtn = document.getElementById('askAiDoctorBtn');
+                if (askAiDoctorBtn) {
+                    // Remove old listeners by cloning
+                    const newBtn = askAiDoctorBtn.cloneNode(true);
+                    askAiDoctorBtn.parentNode.replaceChild(newBtn, askAiDoctorBtn);
+                    
+                    newBtn.addEventListener('click', () => {
+                        const msg = `I just used the symptom checker and got a prediction of **${data.predicted_disease}** with ${data.confidence_score}% confidence. My symptoms were: ${formData.getAll('symptoms').join(', ')}. Can you give me more details about this condition and what I should do next?`;
+                        if (typeof window.openAIChat === 'function') {
+                            window.openAIChat(msg);
+                        }
+                    });
+                }
+                
+                // Show Results
+                resLoading.classList.add('hidden');
+                resData.classList.remove('hidden');
+                
+            } else {
+                // Show Error
+                resLoading.classList.add('hidden');
+                resPlaceholder.classList.remove('hidden');
+                errorText.textContent = data.error || 'An unexpected error occurred.';
+                errorAlert.classList.remove('hidden');
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            resLoading.classList.add('hidden');
+            resPlaceholder.classList.remove('hidden');
+            errorText.textContent = 'Network error. Please try again.';
+            errorAlert.classList.remove('hidden');
+        }
     });
 });
 </script>
-{% endblock content %}
+{% endblock extra_js %}
