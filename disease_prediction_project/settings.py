@@ -119,3 +119,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Authentication
+LOGIN_URL = 'accounts:login'
+
+# AI Integration
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
