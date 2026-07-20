@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Analyzer - MediPredict AI{% endblock %}
+
+{% block dashboard_content %}
+<div class="animate-fade-in-down max-w-5xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">AI Report Analyzer</h1>
+        <p class="text-slate-400 max-w-2xl">Upload your medical report (PDF) and let Grok AI extract the text, analyze abnormal values, and summarize the findings in plain English.</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Upload Section -->
+        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-xl text-center relative overflow-hidden group">
+            <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            
+            <form id="reportForm" action="{% url 'predictor:analyze_report' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-12 transition-colors relative cursor-pointer" id="dropZone">
+                    <input type="file" name="report_file" id="reportFile" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    
+                    <div class="flex flex-col items-center justify-center space-y-4">
+                        <div class="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center text-blue-500 text-4xl shadow-inner group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white">Drag & Drop your PDF report here</h3>
+                        <p class="text-slate-400">or click to browse from your computer</p>
+                        <p class="text-xs font-medium text-slate-500 bg-slate-800 px-3 py-1 rounded-full mt-2" id="fileNameDisplay">No file selected</p>
+                    </div>
+                </div>
+                
+                <!-- Error Message Container -->
+                <div id="errorAlert" class="hidden mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start gap-3 text-left">
+                    <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                    <span id="errorText"></span>
+                </div>
+                
+                <button type="submit" id="submitBtn" class="mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center justify-center gap-2 w-full sm:w-auto mx-auto disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span>Analyze Report with AI</span>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+            </form>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="resultLoading" class="hidden bg-slate-900/50 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-[0_0_30px_rgba(37,99,235,0.1)]">
+            <div class="relative w-24 h-24 mb-8">
+                <div class="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-blue-400 text-2xl">
+                    <i class="fa-solid fa-microscope animate-pulse"></i>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Extracting & Analyzing...</h3>
+            <p class="text-blue-400">Grok AI is reading your medical report.</p>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="resultData" class="hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <div class="flex items-center gap-4 mb-8 border-b border-slate-800 pb-6">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-3xl shadow-inner">
+                        <i class="fa-solid fa-check-double"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white mb-1">AI Analysis Complete</h2>
+                        <p class="text-slate-400 font-medium text-sm flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/20">Powered by Grok</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="prose prose-invert prose-blue max-w-none text-slate-300 leading-relaxed markdown-body" id="resContent">
+                    <!-- Markdown content goes here -->
+                </div>
+                
+                <!-- Disclaimer -->
+                <div class="mt-10 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info text-amber-400 mt-1 text-lg"></i>
+                    <div>
+                        <h4 class="text-amber-400 font-bold mb-1">Disclaimer</h4>
+                        <p class="text-amber-200/80 text-sm leading-relaxed">
+                            This analysis was generated by Artificial Intelligence and should NOT be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with your physician or other qualified healthcare provider with any questions you may have regarding a medical condition.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const reportFile = document.getElementById('reportFile');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const dropZone = document.getElementById('dropZone');
+    
+    // File input change
+    reportFile.addEventListener('change', function(e) {
+        if (this.files && this.files.length > 0) {
+            fileNameDisplay.textContent = this.files[0].name;
+            fileNameDisplay.classList.remove('text-slate-500', 'bg-slate-800');
+            fileNameDisplay.classList.add('text-blue-400', 'bg-blue-500/20', 'border', 'border-blue-500/30');
+            dropZone.classList.add('border-blue-500', 'bg-blue-500/5');
+        } else {
+            fileNameDisplay.textContent = 'No file selected';
+            fileNameDisplay.classList.add('text-slate-500', 'bg-slate-800');
+            fileNameDisplay.classList.remove('text-blue-400', 'bg-blue-500/20', 'border', 'border-blue-500/30');
+            dropZone.classList.remove('border-blue-500', 'bg-blue-500/5');
+        }
+    });
+    
+    // Form Submission
+    const form = document.getElementById('reportForm');
+    const resLoading = document.getElementById('resultLoading');
+    const resData = document.getElementById('resultData');
+    const resContent = document.getElementById('resContent');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorText = document.getElementById('errorText');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!reportFile.files || reportFile.files.length === 0) {
+            errorText.textContent = 'Please select a PDF file first.';
+            errorAlert.classList.remove('hidden');
+            return;
+        }
+        
+        errorAlert.classList.add('hidden');
+        resData.classList.add('hidden');
+        resLoading.classList.remove('hidden');
+        submitBtn.disabled = true;
+        
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                let formattedText = data.response
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/- (.*?)<br>/g, '<li>$1</li>')
+                    .replace(/<li>/g, '<ul class="list-disc pl-5 mb-4"><li>')
+                    .replace(/<\/li><br>/g, '</li></ul>')
+                    .replace(/### (.*?)<br>/g, '<h3 class="text-xl font-bold text-white mt-6 mb-3">$1</h3>');
+                    
+                // Clean up nested lists hack
+                formattedText = formattedText.replace(/<\/ul><ul class="list-disc pl-5 mb-4">/g, '');
+                
+                resContent.innerHTML = formattedText;
+                
+                resLoading.classList.add('hidden');
+                resData.classList.remove('hidden');
+                
+                // Scroll to results
+                resData.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                resLoading.classList.add('hidden');
+                errorText.textContent = data.error || 'An unexpected error occurred.';
+                errorAlert.classList.remove('hidden');
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            resLoading.classList.add('hidden');
+            errorText.textContent = 'Network error. Please try again.';
+            errorAlert.classList.remove('hidden');
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+});
+</script>
+{% endblock %}
