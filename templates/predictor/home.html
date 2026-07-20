@@ -1,91 +1,246 @@
 {% extends 'base.html' %}
 
+{% block dashboard_content %}
+    {% if user.is_authenticated %}
+    <div class="space-y-6 animate-fade-in-down">
+        <!-- Dashboard Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">Welcome back, {{ user.username }}!</h1>
+                <p class="text-slate-400">Here's your health overview and AI insights for today.</p>
+            </div>
+            <a href="{% url 'predictor:checker' %}" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center gap-2">
+                <i class="fa-solid fa-stethoscope"></i> New Prediction
+            </a>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-xl">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
+                    <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-lg">+2 this week</span>
+                </div>
+                <h3 class="text-slate-400 text-sm font-medium mb-1">Total Predictions</h3>
+                <p class="text-3xl font-bold text-white">{{ user.predictionhistory_set.count }}</p>
+            </div>
+            
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs font-semibold rounded-lg">Stable</span>
+                </div>
+                <h3 class="text-slate-400 text-sm font-medium mb-1">Health Score</h3>
+                <div class="flex items-end gap-2">
+                    <p class="text-3xl font-bold text-white">85</p>
+                    <p class="text-slate-500 text-sm mb-1">/100</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-xl">
+                        <i class="fa-solid fa-shield-virus"></i>
+                    </div>
+                    <span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 text-xs font-semibold rounded-lg">Moderate</span>
+                </div>
+                <h3 class="text-slate-400 text-sm font-medium mb-1">Avg Risk Level</h3>
+                <p class="text-3xl font-bold text-white">Low</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 shadow-lg shadow-blue-900/20 text-white relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <div class="flex justify-between items-start mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl backdrop-blur-sm">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                </div>
+                <h3 class="text-blue-100 text-sm font-medium mb-1 relative z-10">AI Suggestions</h3>
+                <p class="text-sm leading-relaxed relative z-10 font-medium mt-2">"Based on recent data, drinking 2L of water daily will improve your fatigue symptoms."</p>
+            </div>
+        </div>
+
+        <!-- Recent Predictions Table -->
+        <div class="mt-8 bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white">Recent Predictions</h2>
+                <a href="{% url 'predictor:history' %}" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">View All &rarr;</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
+                            <th class="p-4 font-semibold">Date</th>
+                            <th class="p-4 font-semibold">Predicted Disease</th>
+                            <th class="p-4 font-semibold">Confidence</th>
+                            <th class="p-4 font-semibold">Symptoms</th>
+                            <th class="p-4 font-semibold text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-sm">
+                        {% for record in user.predictionhistory_set.all|dictsortreversed:"date"|slice:":5" %}
+                        <tr class="hover:bg-slate-800/30 transition-colors">
+                            <td class="p-4 text-slate-300">{{ record.date|date:"M d, Y" }}</td>
+                            <td class="p-4">
+                                <span class="font-medium text-white">{{ record.predicted_disease }}</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ record.confidence }}%"></div>
+                                    </div>
+                                    <span class="text-slate-300">{{ record.confidence }}%</span>
+                                </div>
+                            </td>
+                            <td class="p-4 text-slate-400 max-w-xs truncate" title="{{ record.symptoms_selected }}">
+                                {{ record.symptoms_selected|truncatechars:40 }}
+                            </td>
+                            <td class="p-4 text-right">
+                                <button class="p-2 text-slate-400 hover:text-blue-400 transition-colors" title="Ask AI Doctor">
+                                    <i class="fa-solid fa-comment-medical"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-500">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800/50 mb-4 text-slate-400 text-2xl">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                </div>
+                                <p>No predictions yet. <a href="{% url 'predictor:checker' %}" class="text-blue-400 hover:underline">Make your first prediction!</a></p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
-<!-- Decorative Background Elements -->
-<div class="hero-bg-glow glow-1"></div>
-<div class="hero-bg-glow glow-2"></div>
-
-<div class="hero-container fade-in-up">
-    <div class="alert alert-info text-center glass-card pulse-soft" style="display: inline-block; padding: 0.5rem 1.5rem; margin-bottom: 2rem; border-radius: 9999px;">
-        <strong>✨ AI-Powered:</strong> Now trained on over 246,000 medical records and 773 unique diseases.
-    </div>
-
-    <h1 class="hero-title">Predict Your Health with <br><span class="text-gradient">AI Precision</span></h1>
-    <p class="hero-subtitle" style="margin-left: auto; margin-right: auto;">
-        Empower yourself with our advanced Machine Learning model. Analyze your symptoms to receive highly accurate disease predictions, personalized precautions, and recommended specialists in seconds.
-    </p>
-    
-    <div class="hero-buttons">
-        <a href="{% url 'predictor:checker' %}" class="btn btn-primary btn-lg shine-effect">
-            Start Symptom Checker
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px; vertical-align: -4px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
-        <a href="#how-it-works" class="btn btn-secondary btn-lg">Learn More</a>
-    </div>
-    
-    <div class="hero-stats" style="margin-top: 4rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
-        <div class="stat-item">
-            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 0;">99%</h2>
-            <p style="color: var(--text-muted); font-weight: 500; margin-top: 0.25rem;">Accuracy</p>
+    {% if not user.is_authenticated %}
+    <!-- LANDING PAGE HERO -->
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 md:mt-24 mb-32">
+        <!-- Floating Elements -->
+        <div class="absolute top-10 left-10 text-4xl text-blue-500/20 animate-float pointer-events-none hidden md:block">
+            <i class="fa-solid fa-capsules"></i>
         </div>
-        <div class="stat-item">
-            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 0; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">130+</h2>
-            <p style="color: var(--text-muted); font-weight: 500; margin-top: 0.25rem;">Symptoms</p>
+        <div class="absolute top-40 right-20 text-5xl text-emerald-500/20 animate-float-slow pointer-events-none hidden md:block">
+            <i class="fa-solid fa-heart-pulse"></i>
         </div>
-        <div class="stat-item">
-            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 0; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">24/7</h2>
-            <p style="color: var(--text-muted); font-weight: 500; margin-top: 0.25rem;">Availability</p>
+        <div class="absolute bottom-10 left-1/4 text-3xl text-purple-500/20 animate-float-fast pointer-events-none hidden md:block">
+            <i class="fa-solid fa-dna"></i>
         </div>
-    </div>
-</div>
 
-<section id="how-it-works" class="section fade-in-up" style="margin-top: 8rem; animation-delay: 0.2s; animation-fill-mode: both;">
-    <div style="text-align: center; margin-bottom: 4rem;">
-        <h2 style="font-size: 2.5rem;">How It <span class="text-gradient">Works</span></h2>
-        <p style="color: var(--text-muted); max-width: 600px; margin: 1rem auto 0;">Three simple steps to understand your health better using the power of Artificial Intelligence.</p>
-    </div>
-    
-    <div class="features-grid">
-        <div class="glass-card feature-card">
-            <div class="feature-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <div class="text-center max-w-4xl mx-auto" data-aos="fade-up">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-8 pulse-soft">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Now integrated with Grok AI
             </div>
-            <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">1. Input Symptoms</h3>
-            <p style="color: var(--text-muted);">Select from a comprehensive list of symptoms you are currently experiencing. Our intuitive interface makes it easy to find exactly how you're feeling.</p>
+            
+            <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-8 leading-tight">
+                AI Disease Prediction <br>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-emerald-400 to-teal-300">Healthcare Platform</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Predict diseases instantly using cutting-edge Machine Learning and receive personalized health insights powered by Grok AI.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="{% url 'accounts:signup' %}" class="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] hover:-translate-y-1 flex items-center justify-center gap-2">
+                    Start Prediction <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#ai-doctor" class="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold text-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-robot text-blue-400"></i> Try AI Assistant
+                </a>
+            </div>
         </div>
         
-        <div class="glass-card feature-card">
-            <div class="feature-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--secondary);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><polyline points="10 10 12 12 14 10"></polyline></svg>
+        <!-- Animated Stats -->
+        <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+            <div class="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-md border border-slate-800 text-center shadow-2xl">
+                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-2">99%</h3>
+                <p class="text-blue-400 font-medium text-lg">Prediction Accuracy</p>
             </div>
-            <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">2. AI Analysis</h3>
-            <p style="color: var(--text-muted);">Our Random Forest machine learning model processes your symptoms against thousands of medical patterns to identify the best match instantly.</p>
+            <div class="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-md border border-slate-800 text-center shadow-2xl">
+                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-2">700+</h3>
+                <p class="text-emerald-400 font-medium text-lg">Diseases Trained</p>
+            </div>
+            <div class="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-md border border-slate-800 text-center shadow-2xl">
+                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-2">24/7</h3>
+                <p class="text-purple-400 font-medium text-lg">AI Doctor Access</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES SECTION -->
+    <div id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="text-4xl font-bold text-white mb-4">Premium Health Features</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">Everything you need to monitor and understand your health in one secure platform.</p>
         </div>
         
-        <div class="glass-card feature-card">
-            <div class="feature-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feature 1 -->
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-stethoscope"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Disease Prediction</h3>
+                <p class="text-slate-400 leading-relaxed">Input your symptoms and get an instant, highly accurate disease prediction based on thousands of medical records.</p>
             </div>
-            <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">3. Get Results</h3>
-            <p style="color: var(--text-muted);">Receive an instant disease prediction with confidence scores, actionable health advice, and recommended specialists to consult.</p>
+            
+            <!-- Feature 2 -->
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">AI Doctor (Grok)</h3>
+                <p class="text-slate-400 leading-relaxed">Chat with our advanced Grok-powered AI to understand your symptoms, get precautions, and receive diet plans.</p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Report Analysis</h3>
+                <p class="text-slate-400 leading-relaxed">Upload your medical PDFs or images. Our AI will extract the text, analyze abnormal values, and provide a plain-English summary.</p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Health Dashboard</h3>
+                <p class="text-slate-400 leading-relaxed">Track your health score, view recent predictions, and monitor your risk levels with beautiful analytical charts.</p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-14 h-14 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-pink-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-hospital"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Nearby Hospitals</h3>
+                <p class="text-slate-400 leading-relaxed">Instantly locate the best specialists and hospitals near your location based on your predicted condition.</p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-apple-whole"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Diet & Exercise</h3>
+                <p class="text-slate-400 leading-relaxed">Receive personalized diet recommendations, workout routines, and wellness tips tailored to your health status.</p>
+            </div>
         </div>
     </div>
-</section>
-
-<section class="cta-section glass-card fade-in-up" style="margin-top: 8rem; text-align: center; padding: 4rem 2rem; position: relative; overflow: hidden; animation-delay: 0.4s; animation-fill-mode: both; margin-bottom: 4rem;">
-    <div style="position: relative; z-index: 1;">
-        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to take control of your health?</h2>
-        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; font-size: 1.125rem;">
-            Join thousands of users who are already using MediPredict AI to understand their symptoms better.
-        </p>
-        {% if user.is_authenticated %}
-            <a href="{% url 'predictor:checker' %}" class="btn btn-primary btn-lg shine-effect" style="padding: 1.25rem 2.5rem; font-size: 1.125rem;">Go to Symptom Checker</a>
-        {% else %}
-            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-lg shine-effect" style="padding: 1.25rem 2.5rem; font-size: 1.125rem;">Create an Account for Free</a>
-        {% endif %}
-    </div>
-    <!-- Abstract background shape -->
-    <div style="position: absolute; right: -10%; top: -50%; width: 50%; height: 200%; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); z-index: 0; pointer-events: none;"></div>
-    <div style="position: absolute; left: -10%; bottom: -50%; width: 50%; height: 200%; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); z-index: 0; pointer-events: none;"></div>
-</section>
-{% endblock content %}
+    {% endif %}
+{% endblock %}
