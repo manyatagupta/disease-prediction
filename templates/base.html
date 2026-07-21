@@ -288,11 +288,25 @@
             });
         }
         
+        // Define global chat memory
+        window.aiChatHistory = [];
+        
+        // Simple markdown formatter
+        function formatMarkdown(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
         if (aiChatForm) {
             aiChatForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const message = aiChatInput.value.trim();
                 if (!message) return;
+                
+                // 1. Store in memory
+                window.aiChatHistory.push({role: 'user', content: message});
                 
                 // Add user message to UI
                 aiChatMessages.innerHTML += `
@@ -308,15 +322,15 @@
                 aiChatInput.value = '';
                 aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
                 
-                // Add loading indicator
-                const loadingId = 'loading-' + Date.now();
+                // Prepare response bubble
+                const responseId = 'resp-' + Date.now();
                 aiChatMessages.innerHTML += `
-                    <div id="${loadingId}" class="flex items-start gap-3">
+                    <div class="flex items-start gap-3">
                         <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
                             <i class="fa-solid fa-robot text-xs"></i>
                         </div>
-                        <div class="bg-slate-800 text-slate-400 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%] flex items-center gap-2">
-                            <i class="fa-solid fa-circle-notch fa-spin"></i> Grok is typing...
+                        <div id="${responseId}" class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Grok is thinking...
                         </div>
                     </div>
                 `;
@@ -328,55 +342,53 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ message: message })
+                        body: JSON.stringify({ messages: window.aiChatHistory })
                     });
                     
-                    const data = await response.json();
-                    document.getElementById(loadingId).remove();
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    let fullResponse = "";
+                    let isFirstChunk = true;
+                    const respElement = document.getElementById(responseId);
                     
-                    if (data.success) {
-                        // Very simple markdown formatting to HTML
-                        let formattedText = data.response
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                            .replace(/\n/g, '<br>');
-                            
-                        aiChatMessages.innerHTML += `
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
-                                    <i class="fa-solid fa-robot text-xs"></i>
-                                </div>
-                                <div class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body">
-                                    ${formattedText}
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        aiChatMessages.innerHTML += `
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0 mt-1">
-                                    <i class="fa-solid fa-triangle-exclamation text-xs"></i>
-                                </div>
-                                <div class="bg-slate-800 text-red-400 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%]">
-                                    Error: ${data.error}
-                                </div>
-                            </div>
-                        `;
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, {stream: true});
+                        const lines = chunk.split('\n');
+                        
+                        for (let line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const dataStr = line.substring(6);
+                                if (dataStr === '[DONE]') continue;
+                                
+                                try {
+                                    const data = JSON.parse(dataStr);
+                                    if (data.content) {
+                                        if (isFirstChunk) {
+                                            respElement.innerHTML = '';
+                                            isFirstChunk = false;
+                                        }
+                                        fullResponse += data.content;
+                                        respElement.innerHTML = formatMarkdown(fullResponse);
+                                        aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                                    }
+                                } catch (e) {
+                                    // Ignore JSON parse errors for incomplete chunks
+                                }
+                            }
+                        }
                     }
+                    
+                    // 2. Store assistant response in memory
+                    window.aiChatHistory.push({role: 'assistant', content: fullResponse});
+                    
                 } catch (err) {
-                    document.getElementById(loadingId).remove();
-                    aiChatMessages.innerHTML += `
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0 mt-1">
-                                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
-                            </div>
-                            <div class="bg-slate-800 text-red-400 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%]">
-                                Connection error. Please try again later.
-                            </div>
-                        </div>
-                    `;
+                    const respElement = document.getElementById(responseId);
+                    respElement.classList.add('text-red-400');
+                    respElement.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Connection error. Please try again.';
                 }
-                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
             });
         }
     </script>
