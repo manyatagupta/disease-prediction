@@ -6,7 +6,8 @@ This is a modern, responsive web application built with Python (Django) that lev
 
 * **Premium UI**: Built with custom Vanilla CSS featuring glassmorphism, dynamic gradients, and smooth micro-animations.
 * **AI Symptom Checker**: Select from 377 different symptoms. The Random Forest model instantly predicts the most likely disease and provides a confidence score.
-* **Actionable Advice**: Displays descriptions, suggested precautions, and the recommended specialist (e.g., General Physician, Neurologist) for the predicted disease.
+* **Grok AI Doctor**: An integrated AI assistant with real-time streaming and context memory to discuss symptoms and get personalized diet/precaution plans.
+* **Grok Vision OCR**: Upload Medical Report PDFs or Images (JPG/PNG). The multimodal AI extracts data and highlights abnormal findings automatically.
 * **User Authentication**: Secure sign up and login system (powered by Django Auth).
 * **Prediction History**: Logged-in users have a personalized dashboard to track their past predictions and selected symptoms.
 
