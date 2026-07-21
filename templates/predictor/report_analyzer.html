@@ -6,7 +6,7 @@
 <div class="animate-fade-in-down max-w-5xl mx-auto">
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-white mb-2">AI Report Analyzer</h1>
-        <p class="text-slate-400 max-w-2xl">Upload your medical report (PDF) and let Grok AI extract the text, analyze abnormal values, and summarize the findings in plain English.</p>
+        <p class="text-slate-400 max-w-2xl">Upload your medical report (PDF or Image) and let Grok AI extract the text, analyze abnormal values, and summarize the findings in plain English.</p>
     </div>
 
     <div class="grid grid-cols-1 gap-8">
@@ -18,13 +18,13 @@
                 {% csrf_token %}
                 
                 <div class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-12 transition-colors relative cursor-pointer" id="dropZone">
-                    <input type="file" name="report_file" id="reportFile" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <input type="file" name="report_file" id="reportFile" accept=".pdf,image/jpeg,image/png,image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                     
                     <div class="flex flex-col items-center justify-center space-y-4">
                         <div class="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center text-blue-500 text-4xl shadow-inner group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-file-pdf"></i>
                         </div>
-                        <h3 class="text-xl font-semibold text-white">Drag & Drop your PDF report here</h3>
+                        <h3 class="text-xl font-semibold text-white">Drag & Drop your PDF or Image report here</h3>
                         <p class="text-slate-400">or click to browse from your computer</p>
                         <p class="text-xs font-medium text-slate-500 bg-slate-800 px-3 py-1 rounded-full mt-2" id="fileNameDisplay">No file selected</p>
                     </div>
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
         e.preventDefault();
         
         if (!reportFile.files || reportFile.files.length === 0) {
-            errorText.textContent = 'Please select a PDF file first.';
+            errorText.textContent = 'Please select a PDF or Image file first.';
             errorAlert.classList.remove('hidden');
             return;
         }
