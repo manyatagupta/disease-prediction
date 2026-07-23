@@ -6,54 +6,54 @@
         <!-- Dashboard Header -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-white mb-2">Welcome back, {{ user.username }}!</h1>
-                <p class="text-slate-400">Here's your health overview and AI insights for today.</p>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Welcome back, {{ user.username }}!</h1>
+                <p class="text-slate-600 dark:text-slate-400 transition-colors">Here's your health overview and AI insights for today.</p>
             </div>
-            <a href="{% url 'predictor:checker' %}" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center gap-2">
+            <a href="{% url 'predictor:checker' %}" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2">
                 <i class="fa-solid fa-stethoscope"></i> New Prediction
             </a>
         </div>
 
         <!-- Metric Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300">
+            <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md dark:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl transition-colors">
                         <i class="fa-solid fa-clipboard-list"></i>
                     </div>
-                    <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-lg">+2 this week</span>
+                    <span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-lg transition-colors">+2 this week</span>
                 </div>
-                <h3 class="text-slate-400 text-sm font-medium mb-1">Total Predictions</h3>
-                <p class="text-3xl font-bold text-white">{{ user.predictionhistory_set.count }}</p>
+                <h3 class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 transition-colors">Total Predictions</h3>
+                <p class="text-3xl font-bold text-slate-800 dark:text-white transition-colors">{{ user.predictionhistory_set.count }}</p>
             </div>
             
-            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300">
+            <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md dark:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl transition-colors">
                         <i class="fa-solid fa-heart-pulse"></i>
                     </div>
-                    <span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs font-semibold rounded-lg">Stable</span>
+                    <span class="px-2.5 py-1 bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-lg transition-colors">Stable</span>
                 </div>
-                <h3 class="text-slate-400 text-sm font-medium mb-1">Health Score</h3>
+                <h3 class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 transition-colors">Health Score</h3>
                 <div class="flex items-end gap-2">
-                    <p class="text-3xl font-bold text-white">85</p>
-                    <p class="text-slate-500 text-sm mb-1">/100</p>
+                    <p class="text-3xl font-bold text-slate-800 dark:text-white transition-colors">85</p>
+                    <p class="text-slate-400 dark:text-slate-500 text-sm mb-1 transition-colors">/100</p>
                 </div>
             </div>
 
-            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg hover:-translate-y-1 transition-transform duration-300">
+            <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md dark:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-xl transition-colors">
                         <i class="fa-solid fa-shield-virus"></i>
                     </div>
-                    <span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 text-xs font-semibold rounded-lg">Moderate</span>
+                    <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-semibold rounded-lg transition-colors">Moderate</span>
                 </div>
-                <h3 class="text-slate-400 text-sm font-medium mb-1">Avg Risk Level</h3>
-                <p class="text-3xl font-bold text-white">Low</p>
+                <h3 class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 transition-colors">Avg Risk Level</h3>
+                <p class="text-3xl font-bold text-slate-800 dark:text-white transition-colors">Low</p>
             </div>
 
-            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 shadow-lg shadow-blue-900/20 text-white relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
-                <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-2xl p-6 shadow-md dark:shadow-blue-900/20 text-white relative overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-white/20 dark:bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                 <div class="flex justify-between items-start mb-4 relative z-10">
                     <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl backdrop-blur-sm">
                         <i class="fa-solid fa-robot"></i>
@@ -65,15 +65,15 @@
         </div>
 
         <!-- Recent Predictions Table -->
-        <div class="mt-8 bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
-            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                <h2 class="text-xl font-bold text-white">Recent Predictions</h2>
-                <a href="{% url 'predictor:history' %}" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">View All &rarr;</a>
+        <div class="mt-8 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-lg transition-colors">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center transition-colors">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Recent Predictions</h2>
+                <a href="{% url 'predictor:history' %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors">View All &rarr;</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
+                        <tr class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider transition-colors">
                             <th class="p-4 font-semibold">Date</th>
                             <th class="p-4 font-semibold">Predicted Disease</th>
                             <th class="p-4 font-semibold">Confidence</th>
@@ -81,26 +81,26 @@
                             <th class="p-4 font-semibold text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800 text-sm">
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-sm transition-colors">
                         {% for record in user.predictionhistory_set.all|dictsortreversed:"date"|slice:":5" %}
-                        <tr class="hover:bg-slate-800/30 transition-colors">
-                            <td class="p-4 text-slate-300">{{ record.date|date:"M d, Y" }}</td>
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                            <td class="p-4 text-slate-600 dark:text-slate-300">{{ record.date|date:"M d, Y" }}</td>
                             <td class="p-4">
-                                <span class="font-medium text-white">{{ record.predicted_disease }}</span>
+                                <span class="font-medium text-slate-900 dark:text-white">{{ record.predicted_disease }}</span>
                             </td>
                             <td class="p-4">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="w-16 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                                         <div class="h-full bg-blue-500 rounded-full" style="width: {{ record.confidence }}%"></div>
                                     </div>
-                                    <span class="text-slate-300">{{ record.confidence }}%</span>
+                                    <span class="text-slate-600 dark:text-slate-300">{{ record.confidence }}%</span>
                                 </div>
                             </td>
-                            <td class="p-4 text-slate-400 max-w-xs truncate" title="{{ record.symptoms_selected }}">
+                            <td class="p-4 text-slate-500 dark:text-slate-400 max-w-xs truncate" title="{{ record.symptoms_selected }}">
                                 {{ record.symptoms_selected|truncatechars:40 }}
                             </td>
                             <td class="p-4 text-right">
-                                <button class="p-2 text-slate-400 hover:text-blue-400 transition-colors" title="Ask AI Doctor">
+                                <button class="p-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Ask AI Doctor">
                                     <i class="fa-solid fa-comment-medical"></i>
                                 </button>
                             </td>
@@ -108,10 +108,10 @@
                         {% empty %}
                         <tr>
                             <td colspan="5" class="p-8 text-center text-slate-500">
-                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800/50 mb-4 text-slate-400 text-2xl">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800/50 mb-4 text-slate-400 text-2xl transition-colors">
                                     <i class="fa-solid fa-folder-open"></i>
                                 </div>
-                                <p>No predictions yet. <a href="{% url 'predictor:checker' %}" class="text-blue-400 hover:underline">Make your first prediction!</a></p>
+                                <p>No predictions yet. <a href="{% url 'predictor:checker' %}" class="text-blue-600 dark:text-blue-400 hover:underline">Make your first prediction!</a></p>
                             </td>
                         </tr>
                         {% endfor %}
@@ -128,53 +128,53 @@
     <!-- LANDING PAGE HERO -->
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 md:mt-24 mb-32">
         <!-- Floating Elements -->
-        <div class="absolute top-10 left-10 text-4xl text-blue-500/20 animate-float pointer-events-none hidden md:block">
+        <div class="absolute top-10 left-10 text-4xl text-blue-500/30 dark:text-blue-500/20 animate-float pointer-events-none hidden md:block">
             <i class="fa-solid fa-capsules"></i>
         </div>
-        <div class="absolute top-40 right-20 text-5xl text-emerald-500/20 animate-float-slow pointer-events-none hidden md:block">
+        <div class="absolute top-40 right-20 text-5xl text-emerald-500/30 dark:text-emerald-500/20 animate-float-slow pointer-events-none hidden md:block">
             <i class="fa-solid fa-heart-pulse"></i>
         </div>
-        <div class="absolute bottom-10 left-1/4 text-3xl text-purple-500/20 animate-float-fast pointer-events-none hidden md:block">
+        <div class="absolute bottom-10 left-1/4 text-3xl text-purple-500/30 dark:text-purple-500/20 animate-float-fast pointer-events-none hidden md:block">
             <i class="fa-solid fa-dna"></i>
         </div>
 
         <div class="text-center max-w-4xl mx-auto" data-aos="fade-up">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-8 pulse-soft">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-400 text-sm font-medium mb-8 pulse-soft transition-colors">
                 <span class="w-2 h-2 rounded-full bg-blue-500"></span> Now integrated with Grok AI
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-8 leading-tight">
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-8 leading-tight transition-colors">
                 AI Disease Prediction <br>
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-emerald-400 to-teal-300">Healthcare Platform</span>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-emerald-500 to-teal-400 dark:from-blue-400 dark:via-emerald-400 dark:to-teal-300">Healthcare Platform</span>
             </h1>
             
-            <p class="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed transition-colors">
                 Predict diseases instantly using cutting-edge Machine Learning and receive personalized health insights powered by Grok AI.
             </p>
             
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="{% url 'accounts:signup' %}" class="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] hover:-translate-y-1 flex items-center justify-center gap-2">
+                <a href="{% url 'accounts:signup' %}" class="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2">
                     Start Prediction <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <a href="#ai-doctor" class="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold text-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-robot text-blue-400"></i> Try AI Assistant
+                <a href="#ai-doctor" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-700 font-semibold text-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-robot text-blue-600 dark:text-blue-400"></i> Try AI Assistant
                 </a>
             </div>
         </div>
         
         <!-- Animated Stats -->
         <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
-            <div class="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-md border border-slate-800 text-center shadow-2xl">
-                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-2">99%</h3>
-                <p class="text-blue-400 font-medium text-lg">Prediction Accuracy</p>
+            <div class="p-6 rounded-3xl bg-white dark:bg-slate-900/50 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-center shadow-md dark:shadow-2xl transition-colors">
+                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-slate-700 to-slate-400 dark:from-white dark:to-slate-500 mb-2">99%</h3>
+                <p class="text-blue-600 dark:text-blue-400 font-medium text-lg">Prediction Accuracy</p>
             </div>
-            <div class="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-md border border-slate-800 text-center shadow-2xl">
-                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-2">700+</h3>
-                <p class="text-emerald-400 font-medium text-lg">Diseases Trained</p>
+            <div class="p-6 rounded-3xl bg-white dark:bg-slate-900/50 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-center shadow-md dark:shadow-2xl transition-colors">
+                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-slate-700 to-slate-400 dark:from-white dark:to-slate-500 mb-2">700+</h3>
+                <p class="text-emerald-600 dark:text-emerald-400 font-medium text-lg">Diseases Trained</p>
             </div>
-            <div class="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-md border border-slate-800 text-center shadow-2xl">
-                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-2">24/7</h3>
-                <p class="text-purple-400 font-medium text-lg">AI Doctor Access</p>
+            <div class="p-6 rounded-3xl bg-white dark:bg-slate-900/50 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-center shadow-md dark:shadow-2xl transition-colors">
+                <h3 class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-slate-700 to-slate-400 dark:from-white dark:to-slate-500 mb-2">24/7</h3>
+                <p class="text-purple-600 dark:text-purple-400 font-medium text-lg">AI Doctor Access</p>
             </div>
         </div>
     </div>
@@ -182,63 +182,63 @@
     <!-- FEATURES SECTION -->
     <div id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div class="text-center mb-16" data-aos="fade-up">
-            <h2 class="text-4xl font-bold text-white mb-4">Premium Health Features</h2>
-            <p class="text-slate-400 max-w-2xl mx-auto">Everything you need to monitor and understand your health in one secure platform.</p>
+            <h2 class="text-4xl font-bold text-slate-900 dark:text-white mb-4 transition-colors">Premium Health Features</h2>
+            <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto transition-colors">Everything you need to monitor and understand your health in one secure platform.</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Feature 1 -->
-            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="100">
-                <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all">
+            <div class="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-md dark:shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-blue-600 dark:group-hover:bg-blue-500 group-hover:text-white transition-all">
                     <i class="fa-solid fa-stethoscope"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">Disease Prediction</h3>
-                <p class="text-slate-400 leading-relaxed">Input your symptoms and get an instant, highly accurate disease prediction based on thousands of medical records.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Disease Prediction</h3>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">Input your symptoms and get an instant, highly accurate disease prediction based on thousands of medical records.</p>
             </div>
             
             <!-- Feature 2 -->
-            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="200">
-                <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+            <div class="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-md dark:shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-600 dark:group-hover:bg-emerald-500 group-hover:text-white transition-all">
                     <i class="fa-solid fa-robot"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">AI Doctor (Grok)</h3>
-                <p class="text-slate-400 leading-relaxed">Chat with our advanced Grok-powered AI to understand your symptoms, get precautions, and receive diet plans.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">AI Doctor (Grok)</h3>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">Chat with our advanced Grok-powered AI to understand your symptoms, get precautions, and receive diet plans.</p>
             </div>
             
             <!-- Feature 3 -->
-            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="300">
-                <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all">
+            <div class="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-md dark:shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-purple-600 dark:group-hover:bg-purple-500 group-hover:text-white transition-all">
                     <i class="fa-solid fa-file-pdf"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">Report Analysis</h3>
-                <p class="text-slate-400 leading-relaxed">Upload your medical PDFs or images. Our AI will extract the text, analyze abnormal values, and provide a plain-English summary.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Report Analysis</h3>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">Upload your medical PDFs or images. Our AI will extract the text, analyze abnormal values, and provide a plain-English summary.</p>
             </div>
             
             <!-- Feature 4 -->
-            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="100">
-                <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all">
+            <div class="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-md dark:shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all">
                     <i class="fa-solid fa-chart-pie"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">Health Dashboard</h3>
-                <p class="text-slate-400 leading-relaxed">Track your health score, view recent predictions, and monitor your risk levels with beautiful analytical charts.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Health Dashboard</h3>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">Track your health score, view recent predictions, and monitor your risk levels with beautiful analytical charts.</p>
             </div>
             
             <!-- Feature 5 -->
-            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="200">
-                <div class="w-14 h-14 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-pink-500 group-hover:text-white transition-all">
+            <div class="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-md dark:shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-pink-100 dark:bg-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-pink-500 group-hover:text-white transition-all">
                     <i class="fa-solid fa-hospital"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">Nearby Hospitals</h3>
-                <p class="text-slate-400 leading-relaxed">Instantly locate the best specialists and hospitals near your location based on your predicted condition.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Nearby Hospitals</h3>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">Instantly locate the best specialists and hospitals near your location based on your predicted condition.</p>
             </div>
             
             <!-- Feature 6 -->
-            <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-lg" data-aos="fade-up" data-aos-delay="300">
-                <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+            <div class="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 group shadow-md dark:shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-cyan-100 dark:bg-cyan-500/10 flex items-center justify-center text-cyan-600 dark:text-cyan-400 text-2xl mb-6 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-white transition-all">
                     <i class="fa-solid fa-apple-whole"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3">Diet & Exercise</h3>
-                <p class="text-slate-400 leading-relaxed">Receive personalized diet recommendations, workout routines, and wellness tips tailored to your health status.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Diet & Exercise</h3>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed transition-colors">Receive personalized diet recommendations, workout routines, and wellness tips tailored to your health status.</p>
             </div>
         </div>
     </div>
