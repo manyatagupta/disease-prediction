@@ -5,38 +5,38 @@
 {% block dashboard_content %}
 <div class="animate-fade-in-down max-w-5xl mx-auto">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-white mb-2">AI Report Analyzer</h1>
-        <p class="text-slate-400 max-w-2xl">Upload your medical report (PDF or Image) and let Grok AI extract the text, analyze abnormal values, and summarize the findings in plain English.</p>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">AI Report Analyzer</h1>
+        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors">Upload your medical report (PDF or Image) and let Grok AI extract the text, analyze abnormal values, and summarize the findings in plain English.</p>
     </div>
 
     <div class="grid grid-cols-1 gap-8">
         <!-- Upload Section -->
-        <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-xl text-center relative overflow-hidden group">
+        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-sm dark:shadow-xl text-center relative overflow-hidden group transition-colors">
             <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
             
             <form id="reportForm" action="{% url 'predictor:analyze_report' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <div class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-12 transition-colors relative cursor-pointer" id="dropZone">
+                <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 rounded-2xl p-12 transition-colors relative cursor-pointer" id="dropZone">
                     <input type="file" name="report_file" id="reportFile" accept=".pdf,image/jpeg,image/png,image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                     
                     <div class="flex flex-col items-center justify-center space-y-4">
-                        <div class="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center text-blue-500 text-4xl shadow-inner group-hover:scale-110 transition-transform">
+                        <div class="w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-500 text-4xl shadow-inner group-hover:scale-110 transition-all">
                             <i class="fa-solid fa-file-pdf"></i>
                         </div>
-                        <h3 class="text-xl font-semibold text-white">Drag & Drop your PDF or Image report here</h3>
-                        <p class="text-slate-400">or click to browse from your computer</p>
-                        <p class="text-xs font-medium text-slate-500 bg-slate-800 px-3 py-1 rounded-full mt-2" id="fileNameDisplay">No file selected</p>
+                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white transition-colors">Drag & Drop your PDF or Image report here</h3>
+                        <p class="text-slate-500 dark:text-slate-400 transition-colors">or click to browse from your computer</p>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full mt-2 transition-colors" id="fileNameDisplay">No file selected</p>
                     </div>
                 </div>
                 
                 <!-- Error Message Container -->
-                <div id="errorAlert" class="hidden mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start gap-3 text-left">
+                <div id="errorAlert" class="hidden mt-6 p-4 rounded-xl bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm flex items-start gap-3 text-left transition-colors">
                     <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
                     <span id="errorText"></span>
                 </div>
                 
-                <button type="submit" id="submitBtn" class="mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center justify-center gap-2 w-full sm:w-auto mx-auto disabled:opacity-50 disabled:cursor-not-allowed">
+                <button type="submit" id="submitBtn" class="mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center gap-2 w-full sm:w-auto mx-auto disabled:opacity-50 disabled:cursor-not-allowed">
                     <span>Analyze Report with AI</span>
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                 </button>
@@ -44,45 +44,45 @@
         </div>
         
         <!-- Loading State -->
-        <div id="resultLoading" class="hidden bg-slate-900/50 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-[0_0_30px_rgba(37,99,235,0.1)]">
+        <div id="resultLoading" class="hidden bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-blue-200 dark:border-blue-500/30 rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-[0_0_30px_rgba(37,99,235,0.1)] transition-colors">
             <div class="relative w-24 h-24 mb-8">
-                <div class="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full transition-colors"></div>
                 <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-                <div class="absolute inset-0 flex items-center justify-center text-blue-400 text-2xl">
+                <div class="absolute inset-0 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl">
                     <i class="fa-solid fa-microscope animate-pulse"></i>
                 </div>
             </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Extracting & Analyzing...</h3>
-            <p class="text-blue-400">Grok AI is reading your medical report.</p>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Extracting & Analyzing...</h3>
+            <p class="text-blue-600 dark:text-blue-400 transition-colors">Grok AI is reading your medical report.</p>
         </div>
         
         <!-- Results Section -->
-        <div id="resultData" class="hidden bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+        <div id="resultData" class="hidden bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-md dark:shadow-2xl relative overflow-hidden transition-colors">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-colors"></div>
             
             <div class="relative z-10">
-                <div class="flex items-center gap-4 mb-8 border-b border-slate-800 pb-6">
-                    <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-3xl shadow-inner">
+                <div class="flex items-center gap-4 mb-8 border-b border-slate-200 dark:border-slate-800 pb-6 transition-colors">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-3xl shadow-inner transition-colors">
                         <i class="fa-solid fa-check-double"></i>
                     </div>
                     <div>
-                        <h2 class="text-3xl font-extrabold text-white mb-1">AI Analysis Complete</h2>
-                        <p class="text-slate-400 font-medium text-sm flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/20">Powered by Grok</span>
+                        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-1 transition-colors">AI Analysis Complete</h2>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium text-sm flex items-center gap-2 transition-colors">
+                            <span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 transition-colors">Powered by Grok</span>
                         </p>
                     </div>
                 </div>
                 
-                <div class="prose prose-invert prose-blue max-w-none text-slate-300 leading-relaxed markdown-body" id="resContent">
+                <div class="prose prose-slate dark:prose-invert prose-blue max-w-none text-slate-700 dark:text-slate-300 leading-relaxed markdown-body transition-colors" id="resContent">
                     <!-- Markdown content goes here -->
                 </div>
                 
                 <!-- Disclaimer -->
-                <div class="mt-10 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
-                    <i class="fa-solid fa-circle-info text-amber-400 mt-1 text-lg"></i>
+                <div class="mt-10 p-5 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-start gap-3 transition-colors">
+                    <i class="fa-solid fa-circle-info text-amber-500 dark:text-amber-400 mt-1 text-lg"></i>
                     <div>
-                        <h4 class="text-amber-400 font-bold mb-1">Disclaimer</h4>
-                        <p class="text-amber-200/80 text-sm leading-relaxed">
+                        <h4 class="text-amber-700 dark:text-amber-400 font-bold mb-1 transition-colors">Disclaimer</h4>
+                        <p class="text-amber-900 dark:text-amber-200/80 text-sm leading-relaxed transition-colors">
                             This analysis was generated by Artificial Intelligence and should NOT be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with your physician or other qualified healthcare provider with any questions you may have regarding a medical condition.
                         </p>
                     </div>
@@ -104,14 +104,14 @@ document.addEventListener("DOMContentLoaded", function() {
     reportFile.addEventListener('change', function(e) {
         if (this.files && this.files.length > 0) {
             fileNameDisplay.textContent = this.files[0].name;
-            fileNameDisplay.classList.remove('text-slate-500', 'bg-slate-800');
-            fileNameDisplay.classList.add('text-blue-400', 'bg-blue-500/20', 'border', 'border-blue-500/30');
-            dropZone.classList.add('border-blue-500', 'bg-blue-500/5');
+            fileNameDisplay.classList.remove('text-slate-500', 'dark:text-slate-400', 'bg-slate-100', 'dark:bg-slate-800');
+            fileNameDisplay.classList.add('text-blue-700', 'dark:text-blue-400', 'bg-blue-100', 'dark:bg-blue-500/20', 'border', 'border-blue-200', 'dark:border-blue-500/30');
+            dropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-500/5');
         } else {
             fileNameDisplay.textContent = 'No file selected';
-            fileNameDisplay.classList.add('text-slate-500', 'bg-slate-800');
-            fileNameDisplay.classList.remove('text-blue-400', 'bg-blue-500/20', 'border', 'border-blue-500/30');
-            dropZone.classList.remove('border-blue-500', 'bg-blue-500/5');
+            fileNameDisplay.classList.add('text-slate-500', 'dark:text-slate-400', 'bg-slate-100', 'dark:bg-slate-800');
+            fileNameDisplay.classList.remove('text-blue-700', 'dark:text-blue-400', 'bg-blue-100', 'dark:bg-blue-500/20', 'border', 'border-blue-200', 'dark:border-blue-500/30');
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-500/5');
         }
     });
     
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     .replace(/- (.*?)<br>/g, '<li>$1</li>')
                     .replace(/<li>/g, '<ul class="list-disc pl-5 mb-4"><li>')
                     .replace(/<\/li><br>/g, '</li></ul>')
-                    .replace(/### (.*?)<br>/g, '<h3 class="text-xl font-bold text-white mt-6 mb-3">$1</h3>');
+                    .replace(/### (.*?)<br>/g, '<h3 class="text-xl font-bold text-slate-900 dark:text-white mt-6 mb-3 transition-colors">$1</h3>');
                     
                 // Clean up nested lists hack
                 formattedText = formattedText.replace(/<\/ul><ul class="list-disc pl-5 mb-4">/g, '');
