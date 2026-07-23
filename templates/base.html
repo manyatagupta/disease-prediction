@@ -1,10 +1,18 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MediPredict AI{% endblock %}</title>
+    <script>
+        // Check local storage for theme or use system preference to prevent FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,12 +49,12 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 </head>
-<body class="bg-darker text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500/30 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-darker text-slate-900 dark:text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500/30 transition-colors duration-300">
     
     <!-- Background Gradients -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-600/10 blur-[120px]"></div>
-        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-emerald-600/10 blur-[120px]"></div>
+        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-600/5 dark:bg-blue-600/10 blur-[120px]"></div>
+        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-emerald-600/5 dark:bg-emerald-600/10 blur-[120px]"></div>
     </div>
 
     {% if user.is_authenticated %}
@@ -54,47 +62,47 @@
     <div class="flex h-screen overflow-hidden">
         
         <!-- Sidebar -->
-        <aside class="w-64 flex-shrink-0 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800 flex flex-col hidden md:flex z-20">
-            <div class="p-6 border-b border-slate-800">
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-                    <i class="fa-solid fa-notes-medical text-blue-500"></i> MediPredict
+        <aside class="w-64 flex-shrink-0 bg-white/80 dark:bg-slate-900/50 backdrop-blur-xl border-r border-slate-200 dark:border-slate-800 flex flex-col hidden md:flex z-20 transition-colors">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800 transition-colors">
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500 dark:from-blue-400 dark:to-emerald-400">
+                    <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict
                 </a>
             </div>
             
             <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
-                <div class="pt-2 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Main</div>
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-border-all w-5 text-center text-slate-400 group-hover:text-blue-400 transition-colors"></i> Dashboard
+                <div class="pt-2 pb-2 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Main</div>
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-border-all w-5 text-center text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"></i> Dashboard
                 </a>
-                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-stethoscope w-5 text-center text-slate-400 group-hover:text-emerald-400 transition-colors"></i> Predict Disease
+                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-stethoscope w-5 text-center text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors"></i> Predict Disease
                 </a>
-                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400 group-hover:text-purple-400 transition-colors"></i> History
-                </a>
-                
-                <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">AI Tools</div>
-                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-robot w-5 text-center text-slate-400 group-hover:text-blue-400 transition-colors"></i> AI Doctor
-                </a>
-                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-file-waveform w-5 text-center text-slate-400 group-hover:text-pink-400 transition-colors"></i> Report Analyzer
+                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-purple-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors"></i> History
                 </a>
                 
-                <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Health</div>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-chart-line w-5 text-center text-slate-400 group-hover:text-amber-400 transition-colors"></i> Analytics
+                <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">AI Tools</div>
+                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-robot w-5 text-center text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"></i> AI Doctor
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-hospital w-5 text-center text-slate-400 group-hover:text-red-400 transition-colors"></i> Hospitals
+                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-pink-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-file-waveform w-5 text-center text-slate-400 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors"></i> Report Analyzer
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
-                    <i class="fa-solid fa-gear w-5 text-center text-slate-400 group-hover:text-slate-200 transition-colors"></i> Settings
+                
+                <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Health</div>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-amber-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-slate-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors"></i> Analytics
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-600 dark:hover:text-white transition-all group">
+                    <i class="fa-solid fa-hospital w-5 text-center text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors"></i> Hospitals
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 transition-all group">
+                    <i class="fa-solid fa-gear w-5 text-center text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors"></i> Settings
                 </a>
             </div>
             
-            <div class="p-4 border-t border-slate-800">
-                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all">
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 transition-colors">
+                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all">
                     <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i> Logout
                 </a>
             </div>
@@ -103,33 +111,34 @@
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col overflow-hidden relative">
             <!-- Top Navbar -->
-            <header class="h-16 bg-slate-900/40 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-4 sm:px-6 z-10">
-                <button class="md:hidden text-slate-400 hover:text-white">
+            <header class="h-16 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 z-10 transition-colors">
+                <button class="md:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
                 
                 <!-- Search -->
-                <div class="hidden md:flex items-center bg-slate-800/50 rounded-full px-4 py-2 border border-slate-700/50 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all w-96 max-w-md">
-                    <i class="fa-solid fa-search text-slate-500 mr-2"></i>
-                    <input type="text" placeholder="Search diseases, symptoms, or reports..." class="bg-transparent border-none outline-none text-sm text-slate-200 w-full placeholder-slate-500 focus:ring-0">
+                <div class="hidden md:flex items-center bg-slate-100/80 dark:bg-slate-800/50 rounded-full px-4 py-2 border border-slate-200 dark:border-slate-700/50 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all w-96 max-w-md">
+                    <i class="fa-solid fa-search text-slate-400 dark:text-slate-500 mr-2"></i>
+                    <input type="text" placeholder="Search diseases, symptoms, or reports..." class="bg-transparent border-none outline-none text-sm text-slate-700 dark:text-slate-200 w-full placeholder-slate-400 dark:placeholder-slate-500 focus:ring-0">
                 </div>
                 <div class="md:hidden"></div>
                 
                 <!-- Right Actions -->
                 <div class="flex items-center gap-3 sm:gap-4">
-                    <button class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors relative">
+                    <button class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors relative">
                         <i class="fa-regular fa-bell"></i>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_#3b82f6]"></span>
                     </button>
-                    <button id="theme-toggle" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
-                        <i class="fa-regular fa-moon"></i>
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden"></i>
+                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden"></i>
                     </button>
-                    <div class="flex items-center gap-3 pl-2 sm:pl-4 border-l border-slate-700 cursor-pointer group">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-emerald-400 flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-blue-500/20 transition-all">
+                    <div class="flex items-center gap-3 pl-2 sm:pl-4 border-l border-slate-200 dark:border-slate-700 cursor-pointer group transition-colors">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-emerald-400 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-blue-500/30 dark:group-hover:shadow-blue-500/20 transition-all">
                             {{ user.username|make_list|first|upper }}
                         </div>
-                        <span class="hidden md:block font-medium text-sm text-slate-300 group-hover:text-white transition-colors">{{ user.username }}</span>
-                        <i class="fa-solid fa-chevron-down text-xs text-slate-500 hidden md:block"></i>
+                        <span class="hidden md:block font-medium text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{{ user.username }}</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 hidden md:block"></i>
                     </div>
                 </div>
             </header>
@@ -139,7 +148,7 @@
                 {% if messages %}
                     <div class="mb-6 space-y-3 max-w-4xl mx-auto">
                         {% for message in messages %}
-                            <div class="p-4 rounded-xl border backdrop-blur-md {% if message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-400{% else %}bg-blue-500/10 border-blue-500/20 text-blue-400{% endif %} flex items-center gap-3 animate-fade-in-down shadow-lg">
+                            <div class="p-4 rounded-xl border backdrop-blur-md {% if message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400{% else %}bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-400{% endif %} flex items-center gap-3 animate-fade-in-down shadow-md">
                                 <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %} text-lg"></i>
                                 <span class="font-medium">{{ message }}</span>
                             </div>
@@ -157,24 +166,28 @@
     </div>
     {% else %}
     <!-- LANDING PAGE LAYOUT -->
-    <nav class="fixed w-full z-50 bg-slate-900/60 backdrop-blur-xl border-b border-slate-800 transition-all duration-300" id="landing-nav">
+    <nav class="fixed w-full z-50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300" id="landing-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-                    <i class="fa-solid fa-notes-medical text-blue-500"></i> MediPredict <span class="text-white font-light text-xl">AI</span>
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400">
+                    <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict <span class="text-slate-800 dark:text-white font-light text-xl">AI</span>
                 </a>
                 
                 <div class="hidden md:flex space-x-8">
-                    <a href="#features" class="text-slate-300 hover:text-white transition-colors font-medium">Features</a>
-                    <a href="#how-it-works" class="text-slate-300 hover:text-white transition-colors font-medium">How it Works</a>
-                    <a href="#ai-doctor" class="text-slate-300 hover:text-white transition-colors font-medium">AI Doctor</a>
+                    <a href="#features" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">Features</a>
+                    <a href="#how-it-works" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">How it Works</a>
+                    <a href="#ai-doctor" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">AI Doctor</a>
                 </div>
                 
                 <div class="flex items-center gap-4">
-                    <a href="{% url 'accounts:login' %}" class="text-slate-300 hover:text-white font-medium transition-colors hidden sm:block">Log in</a>
-                    <a href="{% url 'accounts:signup' %}" class="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:-translate-y-0.5">
+                    <a href="{% url 'accounts:login' %}" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors hidden sm:block">Log in</a>
+                    <a href="{% url 'accounts:signup' %}" class="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] hover:-translate-y-0.5">
                         Get Started
                     </a>
+                    <button id="theme-toggle" class="w-10 h-10 ml-2 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden"></i>
+                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -184,61 +197,61 @@
         {% block content %}{% endblock content %}
     </main>
     
-    <footer class="border-t border-slate-800 bg-slate-950/80 py-12 mt-20 backdrop-blur-lg">
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 py-12 mt-20 backdrop-blur-lg transition-colors">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <a href="{% url 'predictor:home' %}" class="flex items-center justify-center gap-2 text-xl font-bold text-white mb-6">
-                <i class="fa-solid fa-notes-medical text-blue-500"></i> MediPredict AI
+            <a href="{% url 'predictor:home' %}" class="flex items-center justify-center gap-2 text-xl font-bold text-slate-800 dark:text-white mb-6">
+                <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict AI
             </a>
-            <p class="text-slate-500 mb-6 max-w-md mx-auto">Empowering global healthcare with advanced Artificial Intelligence. Accurate, fast, and reliable.</p>
-            <p class="text-slate-600 text-sm">&copy; 2026 MediPredict AI. All rights reserved.</p>
+            <p class="text-slate-600 dark:text-slate-500 mb-6 max-w-md mx-auto">Empowering global healthcare with advanced Artificial Intelligence. Accurate, fast, and reliable.</p>
+            <p class="text-slate-500 dark:text-slate-600 text-sm">&copy; 2026 MediPredict AI. All rights reserved.</p>
         </div>
     </footer>
     {% endif %}
 
     <!-- AI DOCTOR CHAT MODAL -->
-    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
+    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
         <!-- Chat Header -->
-        <div class="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/50 rounded-t-2xl">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl transition-colors">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     <i class="fa-solid fa-robot"></i>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold text-sm">Grok AI Doctor</h4>
-                    <p class="text-xs text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Online</p>
+                    <h4 class="text-slate-900 dark:text-white font-bold text-sm">Grok AI Doctor</h4>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span> Online</p>
                 </div>
             </div>
-            <button id="closeAiChat" class="text-slate-400 hover:text-white transition-colors p-2">
+            <button id="closeAiChat" class="text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
         
         <!-- Chat Messages -->
-        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-900/50">
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-white dark:bg-slate-900/50 transition-colors">
             <!-- Initial AI Message -->
             <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
+                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1">
                     <i class="fa-solid fa-robot text-xs"></i>
                 </div>
-                <div class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%]">
+                <div class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-200 dark:border-slate-700 shadow-sm max-w-[80%] transition-colors">
                     Hello! I'm your Grok AI health assistant. You can ask me about your symptoms, get general precautions, or discuss your diet. How can I help you today?
                 </div>
             </div>
         </div>
         
         <!-- Chat Input -->
-        <div class="p-3 border-t border-slate-700 bg-slate-800/50 rounded-b-2xl">
+        <div class="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl transition-colors">
             <form id="aiChatForm" class="flex items-center gap-2">
                 {% csrf_token %}
-                <input type="text" id="aiChatInput" placeholder="Type a medical question..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
-                <button type="submit" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-colors flex-shrink-0 shadow-[0_0_10px_rgba(37,99,235,0.3)]">
+                <input type="text" id="aiChatInput" placeholder="Type a medical question..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                <button type="submit" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-colors flex-shrink-0 shadow-[0_0_10px_rgba(37,99,235,0.2)]">
                     <i class="fa-solid fa-paper-plane text-sm"></i>
                 </button>
             </form>
         </div>
     </div>
     
-    <!-- Floating AI Button (Visible when modal is closed) -->
+    <!-- Floating AI Button -->
     <button id="openAiChat" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center text-xl z-40 transition-transform hover:scale-110">
         <i class="fa-solid fa-robot"></i>
     </button>
@@ -252,11 +265,43 @@
             offset: 50,
         });
         
-        // Dark mode toggle (UI only for now)
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
+        // Dark mode logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Change the icons inside the button based on previous settings
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function() {
+                // toggle icons inside button
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+
+                // if set via local storage previously
+                if (localStorage.getItem('theme')) {
+                    if (localStorage.getItem('theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    }
+                // if NOT set via local storage previously
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                }
             });
         }
 
@@ -268,7 +313,6 @@
         const aiChatInput = document.getElementById('aiChatInput');
         const aiChatMessages = document.getElementById('aiChatMessages');
         
-        // Define global function to open chat with optional initial message
         window.openAIChat = function(initialMessage = null) {
             aiChatModal.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
             openAiChatBtn.classList.add('scale-0', 'opacity-0');
@@ -281,17 +325,14 @@
 
         if (openAiChatBtn && aiChatModal && closeAiChatBtn) {
             openAiChatBtn.addEventListener('click', () => window.openAIChat());
-            
             closeAiChatBtn.addEventListener('click', () => {
                 aiChatModal.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
                 openAiChatBtn.classList.remove('scale-0', 'opacity-0');
             });
         }
         
-        // Define global chat memory
         window.aiChatHistory = [];
         
-        // Simple markdown formatter
         function formatMarkdown(text) {
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -305,13 +346,11 @@
                 const message = aiChatInput.value.trim();
                 if (!message) return;
                 
-                // 1. Store in memory
                 window.aiChatHistory.push({role: 'user', content: message});
                 
-                // Add user message to UI
                 aiChatMessages.innerHTML += `
                     <div class="flex items-start gap-3 flex-row-reverse">
-                        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white flex-shrink-0 mt-1 shadow-sm">
+                        <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-white flex-shrink-0 mt-1 shadow-sm transition-colors">
                             <i class="fa-solid fa-user text-xs"></i>
                         </div>
                         <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[80%]">
@@ -322,14 +361,13 @@
                 aiChatInput.value = '';
                 aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
                 
-                // Prepare response bubble
                 const responseId = 'resp-' + Date.now();
                 aiChatMessages.innerHTML += `
                     <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 mt-1">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1">
                             <i class="fa-solid fa-robot text-xs"></i>
                         </div>
-                        <div id="${responseId}" class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body">
+                        <div id="${responseId}" class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-200 dark:border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body transition-colors">
                             <i class="fa-solid fa-circle-notch fa-spin"></i> Grok is thinking...
                         </div>
                     </div>
@@ -374,19 +412,16 @@
                                         respElement.innerHTML = formatMarkdown(fullResponse);
                                         aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
                                     }
-                                } catch (e) {
-                                    // Ignore JSON parse errors for incomplete chunks
-                                }
+                                } catch (e) {}
                             }
                         }
                     }
                     
-                    // 2. Store assistant response in memory
                     window.aiChatHistory.push({role: 'assistant', content: fullResponse});
                     
                 } catch (err) {
                     const respElement = document.getElementById(responseId);
-                    respElement.classList.add('text-red-400');
+                    respElement.classList.add('text-red-600', 'dark:text-red-400');
                     respElement.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Connection error. Please try again.';
                 }
             });
