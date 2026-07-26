@@ -6,15 +6,23 @@
 <div class="animate-fade-in-down max-w-7xl mx-auto">
     
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">AI Symptom Checker</h1>
-        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors">Select the symptoms you are experiencing. Our advanced AI model will analyze them and predict the most likely condition.</p>
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest mb-4">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Neural Analysis Engine
+        </div>
+        <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 transition-colors tracking-tight">AI Diagnostics Console</h1>
+        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors text-lg">Input your biomarkers and symptoms. Our advanced AI model will cross-reference them against 246,000+ medical records to predict the most likely condition.</p>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
         
         <!-- Form Section -->
-        <div class="w-full lg:w-1/2 flex flex-col gap-6">
-            <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl transition-colors">
+        <div class="w-full lg:w-1/2 flex flex-col gap-6 relative z-10">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-[2rem] blur opacity-20 dark:opacity-30"></div>
+            <div class="bg-white/80 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/20 dark:border-slate-700/50 rounded-3xl p-6 shadow-2xl transition-colors relative">
                 
                 <form id="checkerForm" action="{% url 'predictor:checker' %}" method="POST">
                     {% csrf_token %}
@@ -53,12 +61,12 @@
 
                     <!-- Submit Button -->
                     <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 transition-colors">
-                        <button type="button" id="clearBtn" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors text-sm font-medium px-4 py-2">
-                            Clear All
+                        <button type="button" id="clearBtn" class="text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors text-sm font-medium px-4 py-2">
+                            Reset Console
                         </button>
-                        <button type="submit" id="submitBtn" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2 group">
-                            <span>Analyze Symptoms</span>
-                            <i class="fa-solid fa-wand-magic-sparkles group-hover:rotate-12 transition-transform"></i>
+                        <button type="submit" id="submitBtn" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] flex items-center gap-2 group hover:-translate-y-1">
+                            <span>Initialize Scan</span>
+                            <i class="fa-solid fa-satellite-dish group-hover:animate-pulse"></i>
                         </button>
                     </div>
                 </form>
@@ -105,10 +113,10 @@
                             <h2 id="resDisease" class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white transition-colors">Disease Name</h2>
                         </div>
                         <div class="text-right">
-                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-inner transition-colors">
-                                <span id="resConfidence" class="text-xl font-bold text-emerald-600 dark:text-emerald-400">98%</span>
+                            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-900 border-4 border-emerald-500 dark:border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-colors relative">
+                                <span id="resConfidence" class="text-2xl font-black text-emerald-600 dark:text-emerald-400">98%</span>
                             </div>
-                            <div class="text-xs text-slate-500 mt-2 font-medium">CONFIDENCE</div>
+                            <div class="text-[10px] text-slate-500 mt-3 font-bold tracking-widest">CONFIDENCE</div>
                         </div>
                     </div>
                     
