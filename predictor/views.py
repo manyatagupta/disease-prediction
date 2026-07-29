@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Disease, Symptom, PredictionHistory
 from django.conf import settings
+from .apps import PredictorConfig
 
 def home_view(request):
     return render(request, 'predictor/home.html')
@@ -29,20 +30,15 @@ def checker_view(request):
             messages.error(request, "Please select at least one symptom.")
             return redirect('predictor:checker')
             
-        # Load the ML model
-        model_dir = os.path.join(settings.BASE_DIR, 'predictor', 'ml_model')
-        model_path = os.path.join(model_dir, 'model.pkl')
-        symptoms_list_path = os.path.join(model_dir, 'symptoms_list.pkl')
+        # Use the pre-loaded ML model
+        clf = PredictorConfig.ml_model
+        all_symptoms = PredictorConfig.all_symptoms
         
-        try:
-            clf = joblib.load(model_path)
-            all_symptoms = joblib.load(symptoms_list_path)
-        except Exception as e:
-            print(f"MODEL LOAD ERROR: {type(e).__name__} - {e}")
+        if clf is None or all_symptoms is None:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 from django.http import JsonResponse
-                return JsonResponse({'success': False, 'error': 'Error loading the prediction model. Please try again later.'})
-            messages.error(request, "Error loading the prediction model. Please try again later.")
+                return JsonResponse({'success': False, 'error': 'Error: ML prediction model is not loaded. Please contact support.'})
+            messages.error(request, "Error: ML prediction model is not loaded. Please contact support.")
             return redirect('predictor:checker')
             
         # Prepare input vector
