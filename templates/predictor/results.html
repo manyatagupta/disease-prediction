@@ -3,83 +3,126 @@
 {% block title %}Prediction Results - MediPredict AI{% endblock %}
 
 {% block dashboard_content %}
-<div style="max-width: 800px; margin: 0 auto;">
-    <div class="glass-card" id="report-card">
-        <div class="result-header" style="position: relative;">
-            <button onclick="window.print()" class="btn btn-secondary" style="position: absolute; right: 0; top: 0; padding: 0.5rem 1rem;">🖨️ Print Report</button>
-            <h3 style="color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">AI Prediction</h3>
-            <h2 class="text-gradient" style="font-size: 3rem; margin: 0.5rem 0;">{{ predicted_disease }}</h2>
+<div class="animate-fade-in-down max-w-7xl mx-auto">
+    
+    <div class="mb-8">
+        <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 transition-colors tracking-tight">AI Diagnostics Report</h1>
+        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors text-lg">Your symptoms have been analyzed. Here is the AI-generated diagnostic overview.</p>
+    </div>
+
+    <div id="resultData" class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-10 shadow-md dark:shadow-2xl relative overflow-hidden transition-colors">
+        <!-- Abstract Glow -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-colors"></div>
+        
+        <div class="relative z-10">
+            <div class="flex items-start justify-between mb-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-blue-200 dark:border-blue-500/20 transition-colors">AI Prediction</span>
+                        <span class="px-3 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-amber-200 dark:border-amber-500/20 transition-colors">Moderate</span>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white transition-colors">{{ predicted_disease }}</h2>
+                </div>
+                <div class="text-right">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-900 border-4 border-emerald-500 dark:border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-colors relative">
+                        <span class="text-2xl font-black {% if confidence_score >= 80 %}text-emerald-600 dark:text-emerald-400{% elif confidence_score >= 50 %}text-amber-600 dark:text-amber-400{% else %}text-red-600 dark:text-red-400{% endif %}">{{ confidence_score }}%</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500 mt-3 font-bold tracking-widest">CONFIDENCE</div>
+                </div>
+            </div>
             
             {% if low_confidence_warning %}
-            <div class="alert alert-warning" style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #eab308; padding: 1rem; margin-top: 1rem; border-radius: 4px;">
-                <strong>Warning:</strong> The AI confidence score is quite low. This could mean your symptoms are very generalized or don't strongly match a specific condition in our database.
+            <div class="mb-6 p-4 rounded-xl bg-amber-100 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-start gap-3 transition-colors">
+                <i class="fa-solid fa-circle-exclamation text-amber-600 dark:text-amber-400 mt-1"></i>
+                <p class="text-amber-800 dark:text-amber-200/80 text-sm">Low confidence score. Your symptoms are generalized and may not strongly match a specific condition.</p>
             </div>
             {% endif %}
 
-            <div style="margin-top: 1.5rem;">
-                <span style="font-weight: 600; font-size: 1.125rem;">Confidence Score: {{ confidence_score }}%</span>
-                <div class="confidence-meter">
-                    <div class="confidence-fill" style="width: {{ confidence_score }}%;"></div>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-circle-info text-blue-500"></i> Description
+                    </h4>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed transition-colors">{{ disease_info.description|default:"No description available." }}</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
+                        <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-shield-virus text-emerald-500"></i> Precautions
+                        </h4>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed transition-colors">{{ disease_info.precautions|default:"Consult a doctor." }}</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
+                        <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-user-doctor text-purple-500"></i> Specialist
+                        </h4>
+                        <p class="text-slate-900 dark:text-white text-sm leading-relaxed font-medium transition-colors">{{ disease_info.specialist|default:"General Physician" }}</p>
+                    </div>
+                </div>
+                
+                <!-- Chart Integration -->
+                <div class="mt-6 p-4 rounded-2xl bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 shadow-inner">
+                    <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-indigo-500"></i> Probability Distribution
+                    </h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="probabilityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 no-print" id="actionButtons">
+                    <button id="downloadPdfBtn" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2 transition-colors text-slate-700 dark:text-white font-bold shadow-sm hover:shadow-md group">
+                        <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm">Download Report</span>
+                    </button>
+                    <button id="getDietPlanBtn" class="w-full p-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
+                        <i class="fa-solid fa-apple-whole text-2xl group-hover:animate-bounce"></i>
+                        <span class="text-sm">Get Diet Plan</span>
+                    </button>
+                    <a href="{% url 'predictor:checker' %}" class="w-full p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-[0_0_15px_rgba(79,70,229,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
+                        <i class="fa-solid fa-rotate-left text-2xl group-hover:-rotate-45 transition-transform"></i>
+                        <span class="text-sm">Check Again</span>
+                    </a>
                 </div>
             </div>
         </div>
-        
-        <div style="margin-top: 2rem;">
-            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Alternative Possibilities</h3>
-            <p style="color: var(--text-muted); margin-bottom: 1rem;">The model also considered the following conditions:</p>
-            <canvas id="probChart" width="400" height="200"></canvas>
-        </div>
-
-        <div style="margin-top: 2rem;">
-            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Description</h3>
-            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease_info.description|default:"No description available." }}</p>
-        </div>
-        
-        <div style="margin-top: 2rem;">
-            <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">Precautions</h3>
-            <p style="color: var(--text-muted); line-height: 1.8;">{{ disease_info.precautions|default:"No precautions listed." }}</p>
-        </div>
-        
-        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px;">
-            <h3 style="margin-bottom: 0.5rem;">Recommended Specialist</h3>
-            <p style="font-size: 1.125rem; font-weight: 600; color: #60a5fa;">{{ disease_info.recommended_doctor|default:"General Physician" }}</p>
-        </div>
-        
-        <div style="margin-top: 3rem; display: flex; justify-content: space-between; align-items: center;" class="no-print">
-            <a href="{% url 'predictor:checker' %}" class="btn btn-secondary">&larr; Check Again</a>
-            <a href="{% url 'predictor:history' %}" class="btn btn-primary">View History</a>
-        </div>
     </div>
 </div>
+{% endblock dashboard_content %}
 
-<!-- Load Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% block extra_scripts %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const ctx = document.getElementById('probChart').getContext('2d');
+        const ctx = document.getElementById('probabilityChart').getContext('2d');
         const labels = JSON.parse('{{ chart_labels|safe }}');
         const data = JSON.parse('{{ chart_data|safe }}');
+        
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#94a3b8' : '#64748b'; // slate-400 : slate-500
+        const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
         
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Confidence (%)',
+                    label: 'Probability (%)',
                     data: data,
                     backgroundColor: [
-                        'rgba(59, 130, 246, 0.6)', // Primary Blue
-                        'rgba(16, 185, 129, 0.6)', // Secondary Green
-                        'rgba(245, 158, 11, 0.6)', // Amber
-                        'rgba(239, 68, 68, 0.6)',  // Red
-                        'rgba(139, 92, 246, 0.6)'  // Purple
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(139, 92, 246, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(239, 68, 68, 0.7)'
                     ],
                     borderColor: [
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(16, 185, 129, 1)',
-                        'rgba(245, 158, 11, 1)',
-                        'rgba(239, 68, 68, 1)',
-                        'rgba(139, 92, 246, 1)'
+                        'rgb(59, 130, 246)',
+                        'rgb(139, 92, 246)',
+                        'rgb(16, 185, 129)',
+                        'rgb(245, 158, 11)',
+                        'rgb(239, 68, 68)'
                     ],
                     borderWidth: 1,
                     borderRadius: 4
@@ -87,32 +130,74 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: isDark ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                        titleColor: isDark ? '#fff' : '#000',
+                        bodyColor: isDark ? '#cbd5e1' : '#475569',
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        borderWidth: 1
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
                         max: 100,
-                        ticks: { color: '#9ca3af' },
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        grid: { color: gridColor },
+                        ticks: { color: textColor }
                     },
                     x: {
-                        ticks: { color: '#9ca3af' },
-                        grid: { display: false }
+                        grid: { display: false },
+                        ticks: { 
+                            color: textColor,
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
                     }
-                },
-                plugins: {
-                    legend: { display: false }
                 }
             }
         });
+        
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('click', () => {
+                const element = document.getElementById('resultData');
+                const btnContainer = document.getElementById('actionButtons');
+                const opt = {
+                    margin:       10,
+                    filename:     `MediPredict_Report_{{ predicted_disease|slugify }}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                
+                // Hide buttons
+                btnContainer.style.display = 'none';
+                
+                html2pdf().set(opt).from(element).save().then(() => {
+                    btnContainer.style.display = 'grid'; // restore
+                });
+            });
+        }
+        
+        const getDietPlanBtn = document.getElementById('getDietPlanBtn');
+        if (getDietPlanBtn) {
+            getDietPlanBtn.addEventListener('click', () => {
+                const msg = `I was just diagnosed with **{{ predicted_disease }}**. Please provide a detailed 7-day diet and lifestyle plan tailored to help manage or recover from this condition. Structure it clearly using markdown.`;
+                if (typeof window.openAIChat === 'function') {
+                    window.openAIChat(msg);
+                } else {
+                    alert("AI Chat is not available at this moment.");
+                }
+            });
+        }
     });
 </script>
-
 <style>
     @media print {
-        body { background: white; color: black; }
-        .navbar, .no-print, button { display: none !important; }
-        .glass-card { background: none; border: none; box-shadow: none; filter: none; padding: 0; }
-        .text-gradient { background: none; -webkit-text-fill-color: black; }
+        .no-print { display: none !important; }
     }
 </style>
-{% endblock dashboard_content %}
+{% endblock %}
