@@ -77,25 +77,31 @@
         <!-- Results Section -->
         <div class="w-full lg:w-1/2 flex flex-col">
             <!-- Initial State -->
-            <div id="resultPlaceholder" class="flex-1 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-300 dark:border-slate-800 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] transition-colors shadow-sm dark:shadow-none">
-                <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800/50 flex items-center justify-center text-slate-400 dark:text-slate-600 text-3xl mb-6 transition-colors">
-                    <i class="fa-solid fa-robot"></i>
+            <div id="resultPlaceholder" class="flex-1 bg-white/50 dark:bg-slate-900/40 backdrop-blur-xl border-2 border-slate-300 dark:border-slate-700 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] transition-all duration-500 shadow-inner group">
+                <div class="relative w-24 h-24 mb-6">
+                    <div class="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-75"></div>
+                    <div class="relative w-24 h-24 rounded-full bg-gradient-to-tr from-blue-100 to-slate-100 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-blue-500 dark:text-blue-400 text-4xl shadow-lg border border-white/50 dark:border-slate-600 transition-transform group-hover:scale-110 duration-300">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Awaiting Symptoms</h3>
-                <p class="text-slate-500 max-w-sm transition-colors">Select your symptoms on the left and click Analyze to receive an AI-powered prediction.</p>
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 transition-colors tracking-tight">System Ready</h3>
+                <p class="text-slate-500 max-w-sm transition-colors font-medium">Select your biomarkers on the left and initialize scan to receive an AI-powered diagnostic overview.</p>
             </div>
             
             <!-- Loading State -->
-            <div id="resultLoading" class="hidden flex-1 bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-blue-200 dark:border-blue-500/30 rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] shadow-[0_0_30px_rgba(37,99,235,0.1)] transition-colors">
-                <div class="relative w-24 h-24 mb-8">
-                    <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full transition-colors"></div>
+            <div id="resultLoading" class="hidden flex-1 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-blue-300 dark:border-blue-500/50 rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] shadow-[0_0_40px_rgba(59,130,246,0.2)] transition-all duration-500 relative overflow-hidden">
+                <!-- Scanning line animation -->
+                <div class="absolute top-0 left-0 w-full h-1 bg-blue-500 shadow-[0_0_15px_#3b82f6] animate-[translateY_2s_ease-in-out_infinite] z-0"></div>
+                <div class="relative w-28 h-28 mb-8 z-10">
+                    <div class="absolute inset-0 border-4 border-slate-200 dark:border-slate-700 rounded-full"></div>
                     <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-                    <div class="absolute inset-0 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl">
+                    <div class="absolute inset-0 border-4 border-purple-500/50 rounded-full border-b-transparent animate-[spin_1.5s_linear_infinite_reverse]"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-blue-600 dark:text-blue-400 text-3xl">
                         <i class="fa-solid fa-brain animate-pulse"></i>
                     </div>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Analyzing Patterns...</h3>
-                <p class="text-blue-600 dark:text-blue-400 transition-colors">Querying dataset of 246,000+ medical records.</p>
+                <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-3 tracking-tight z-10">Analyzing Biomarkers...</h3>
+                <p class="text-blue-700 dark:text-blue-300 font-medium z-10 animate-pulse">Cross-referencing neural network with 246,000+ medical records.</p>
             </div>
             
             <!-- Result Data -->
@@ -151,14 +157,29 @@
                             </div>
                         </div>
                         
-                        <!-- AI Doctor CTA -->
-                        <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-600/20 dark:to-purple-600/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-between transition-colors">
-                            <div>
-                                <h4 class="text-slate-900 dark:text-white font-semibold mb-1 transition-colors">Want more details?</h4>
-                                <p class="text-blue-700 dark:text-blue-200/70 text-sm transition-colors">Discuss this result with Grok AI.</p>
+                        <!-- Chart Integration -->
+                        <div class="mt-6 p-4 rounded-2xl bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 shadow-inner">
+                            <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-indigo-500"></i> Probability Distribution
+                            </h4>
+                            <div class="relative h-64 w-full">
+                                <canvas id="probabilityChart"></canvas>
                             </div>
-                            <button id="askAiDoctorBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium shadow-md transition-all">
-                                Ask AI Doctor
+                        </div>
+
+                        <!-- Actions (PDF, Diet, AI) -->
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <button id="downloadPdfBtn" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2 transition-colors text-slate-700 dark:text-white font-bold shadow-sm hover:shadow-md group">
+                                <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-sm">Download Report</span>
+                            </button>
+                            <button id="getDietPlanBtn" class="w-full p-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-apple-whole text-2xl group-hover:animate-bounce"></i>
+                                <span class="text-sm">Get Diet Plan</span>
+                            </button>
+                            <button id="askAiDoctorBtn" class="w-full p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-[0_0_15px_rgba(79,70,229,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-robot text-2xl group-hover:animate-pulse"></i>
+                                <span class="text-sm">Discuss with AI</span>
                             </button>
                         </div>
                     </div>
@@ -283,10 +304,117 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 // Colorize confidence
                 const confEl = document.getElementById('resConfidence');
-                confEl.className = 'text-xl font-bold'; // Reset
+                confEl.className = 'text-2xl font-black'; // Reset
                 if (data.confidence_score >= 80) confEl.classList.add('text-emerald-600', 'dark:text-emerald-400');
                 else if (data.confidence_score >= 50) confEl.classList.add('text-amber-600', 'dark:text-amber-400');
                 else confEl.classList.add('text-red-600', 'dark:text-red-400');
+                
+                // Render Chart.js
+                if (window.probabilityChartInstance) {
+                    window.probabilityChartInstance.destroy();
+                }
+                const ctx = document.getElementById('probabilityChart').getContext('2d');
+                
+                const isDark = document.documentElement.classList.contains('dark');
+                const textColor = isDark ? '#94a3b8' : '#64748b'; // slate-400 : slate-500
+                const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+                
+                window.probabilityChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.chart_labels,
+                        datasets: [{
+                            label: 'Probability (%)',
+                            data: data.chart_data,
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)',  // blue-500
+                                'rgba(139, 92, 246, 0.7)',  // violet-500
+                                'rgba(16, 185, 129, 0.7)',  // emerald-500
+                                'rgba(245, 158, 11, 0.7)',  // amber-500
+                                'rgba(239, 68, 68, 0.7)'    // red-500
+                            ],
+                            borderColor: [
+                                'rgb(59, 130, 246)',
+                                'rgb(139, 92, 246)',
+                                'rgb(16, 185, 129)',
+                                'rgb(245, 158, 11)',
+                                'rgb(239, 68, 68)'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: isDark ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                                titleColor: isDark ? '#fff' : '#000',
+                                bodyColor: isDark ? '#cbd5e1' : '#475569',
+                                borderColor: isDark ? '#334155' : '#e2e8f0',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: { color: gridColor },
+                                ticks: { color: textColor }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { 
+                                    color: textColor,
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Add PDF Download Listener
+                const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+                if (downloadPdfBtn) {
+                    const newPdfBtn = downloadPdfBtn.cloneNode(true);
+                    downloadPdfBtn.parentNode.replaceChild(newPdfBtn, downloadPdfBtn);
+                    newPdfBtn.addEventListener('click', () => {
+                        const element = document.getElementById('resultData');
+                        const opt = {
+                            margin:       10,
+                            filename:     `MediPredict_Report_${data.predicted_disease.replace(/\s+/g, '_')}.pdf`,
+                            image:        { type: 'jpeg', quality: 0.98 },
+                            html2canvas:  { scale: 2, useCORS: true },
+                            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                        };
+                        
+                        // Temporarily hide buttons for PDF
+                        const btnContainer = newPdfBtn.parentElement;
+                        btnContainer.style.display = 'none';
+                        
+                        html2pdf().set(opt).from(element).save().then(() => {
+                            btnContainer.style.display = 'grid'; // restore
+                        });
+                    });
+                }
+
+                
+                // Bind Diet Plan Button
+                const getDietPlanBtn = document.getElementById('getDietPlanBtn');
+                if (getDietPlanBtn) {
+                    const newDietBtn = getDietPlanBtn.cloneNode(true);
+                    getDietPlanBtn.parentNode.replaceChild(newDietBtn, getDietPlanBtn);
+                    
+                    newDietBtn.addEventListener('click', () => {
+                        const msg = `I was just diagnosed with **${data.predicted_disease}**. Please provide a detailed 7-day diet and lifestyle plan tailored to help manage or recover from this condition. Structure it clearly using markdown.`;
+                        if (typeof window.openAIChat === 'function') {
+                            window.openAIChat(msg);
+                        }
+                    });
+                }
                 
                 // Bind AI Doctor Button
                 const askAiDoctorBtn = document.getElementById('askAiDoctorBtn');
