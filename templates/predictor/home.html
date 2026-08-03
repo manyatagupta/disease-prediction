@@ -52,15 +52,19 @@
                 <p class="text-3xl font-bold text-slate-800 dark:text-white transition-colors">Low</p>
             </div>
 
-            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-2xl p-6 shadow-md dark:shadow-blue-900/20 text-white relative overflow-hidden hover:-translate-y-1 transition-all duration-300">
-                <div class="absolute right-0 top-0 w-32 h-32 bg-white/20 dark:bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+            <div class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900 rounded-2xl p-6 shadow-lg shadow-blue-500/30 text-white relative overflow-hidden group hover:-translate-y-1 transition-all duration-500 border border-white/10">
+                <!-- Animated background blobs -->
+                <div class="absolute right-0 top-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="absolute left-0 bottom-0 w-24 h-24 bg-purple-400/30 rounded-full blur-xl -ml-10 -mb-10 group-hover:scale-150 transition-transform duration-700"></div>
+                
                 <div class="flex justify-between items-start mb-4 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl backdrop-blur-sm">
-                        <i class="fa-solid fa-robot"></i>
+                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-xl backdrop-blur-md shadow-inner border border-white/30">
+                        <i class="fa-solid fa-robot group-hover:animate-bounce"></i>
                     </div>
+                    <span class="px-2.5 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-semibold rounded-lg border border-white/10">Live AI</span>
                 </div>
-                <h3 class="text-blue-100 text-sm font-medium mb-1 relative z-10">AI Suggestions</h3>
-                <p class="text-sm leading-relaxed relative z-10 font-medium mt-2">"Based on recent data, drinking 2L of water daily will improve your fatigue symptoms."</p>
+                <h3 class="text-blue-100 text-sm font-medium mb-2 relative z-10 uppercase tracking-wider">AI Insight of the Day</h3>
+                <p class="text-sm leading-relaxed relative z-10 font-medium text-white/90 italic border-l-2 border-white/40 pl-3">"Based on your recent moderate risk level, hydrating properly and 30 mins of daily cardio could reduce risk factors by 15%."</p>
             </div>
         </div>
 
@@ -83,35 +87,44 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-sm transition-colors">
                         {% for record in user.predictionhistory_set.all|dictsortreversed:"date"|slice:":5" %}
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                            <td class="p-4 text-slate-600 dark:text-slate-300">{{ record.date|date:"M d, Y" }}</td>
-                            <td class="p-4">
-                                <span class="font-medium text-slate-900 dark:text-white">{{ record.predicted_disease }}</span>
-                            </td>
-                            <td class="p-4">
+                        <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors relative">
+                            <td class="p-4 text-slate-600 dark:text-slate-300">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-16 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ record.confidence }}%"></div>
-                                    </div>
-                                    <span class="text-slate-600 dark:text-slate-300">{{ record.confidence }}%</span>
+                                    <div class="w-2 h-2 rounded-full {% if record.confidence > 80 %}bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]{% elif record.confidence > 50 %}bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]{% else %}bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]{% endif %}"></div>
+                                    {{ record.date|date:"M d, Y" }}
                                 </div>
                             </td>
-                            <td class="p-4 text-slate-500 dark:text-slate-400 max-w-xs truncate" title="{{ record.symptoms_selected }}">
-                                {{ record.symptoms_selected|truncatechars:40 }}
+                            <td class="p-4">
+                                <span class="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ record.predicted_disease }}</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200 w-10">{{ record.confidence }}%</span>
+                                    <div class="flex-1 max-w-[100px] h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden border border-slate-300 dark:border-slate-600">
+                                        <div class="h-full bg-gradient-to-r {% if record.confidence > 80 %}from-emerald-400 to-emerald-600{% elif record.confidence > 50 %}from-amber-400 to-amber-600{% else %}from-red-400 to-red-600{% endif %} rounded-full" style="width: {{ record.confidence }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-slate-500 dark:text-slate-400 max-w-xs">
+                                <div class="truncate text-sm bg-slate-100 dark:bg-slate-800/80 px-2 py-1 rounded-md border border-slate-200 dark:border-slate-700 inline-block" title="{{ record.symptoms_selected }}">
+                                    {{ record.symptoms_selected }}
+                                </div>
                             </td>
                             <td class="p-4 text-right">
-                                <button class="p-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Ask AI Doctor">
-                                    <i class="fa-solid fa-comment-medical"></i>
+                                <button class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30 transition-all ml-auto" title="Discuss with AI">
+                                    <i class="fa-solid fa-robot"></i>
                                 </button>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-500">
-                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800/50 mb-4 text-slate-400 text-2xl transition-colors">
-                                    <i class="fa-solid fa-folder-open"></i>
+                            <td colspan="5" class="p-12 text-center text-slate-500 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-900/10 dark:to-transparent pointer-events-none"></div>
+                                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 dark:bg-slate-800/80 shadow-inner mb-4 text-blue-500 dark:text-blue-400 text-3xl transition-colors relative z-10">
+                                    <i class="fa-solid fa-stethoscope"></i>
                                 </div>
-                                <p>No predictions yet. <a href="{% url 'predictor:checker' %}" class="text-blue-600 dark:text-blue-400 hover:underline">Make your first prediction!</a></p>
+                                <h4 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1 relative z-10">No Predictions Yet</h4>
+                                <p class="relative z-10">Start your health journey today. <a href="{% url 'predictor:checker' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Make a prediction!</a></p>
                             </td>
                         </tr>
                         {% endfor %}
