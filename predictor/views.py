@@ -56,21 +56,33 @@ def checker_view(request):
         class_probs.sort(key=lambda x: x[1], reverse=True)
         top_5 = class_probs[:5]
         
-        # Boost confidence score using power scaling for better UI experience
+        # Using raw probabilities and normalizing the top 5 to sum to 100% for the chart
         import numpy as np
         probs = np.array([x[1] for x in top_5])
         
-        # Square/Cube the probabilities to exponentially boost the highest one
-        power = 4.0 
-        boosted_probs = probs ** power
-        
-        top_5_sum = np.sum(boosted_probs)
+        top_5_sum = np.sum(probs)
         if top_5_sum > 0:
-            normalized_top_5 = [(top_5[i][0], float(boosted_probs[i] / top_5_sum)) for i in range(len(top_5))]
+            normalized_top_5 = [(top_5[i][0], float(probs[i] / top_5_sum)) for i in range(len(top_5))]
         else:
             normalized_top_5 = top_5
             
         confidence_score = round(normalized_top_5[0][1] * 100, 2)
+        
+        # Extract Top 3 for UI
+        top_3 = []
+        for i in range(min(3, len(normalized_top_5))):
+            d_name = normalized_top_5[i][0]
+            d_conf = round(normalized_top_5[i][1] * 100, 2)
+            d_obj = Disease.objects.filter(name=d_name).first()
+            if d_obj:
+                top_3.append({
+                    'name': d_name,
+                    'confidence': d_conf,
+                    'severity': getattr(d_obj, 'severity', 'Moderate'),
+                    'description': d_obj.description,
+                    'precautions': d_obj.precautions,
+                    'specialist': d_obj.specialist
+                })
         
         chart_labels = json.dumps([x[0] for x in normalized_top_5])
         chart_data = json.dumps([round(x[1] * 100, 2) for x in normalized_top_5])
@@ -94,7 +106,8 @@ def checker_view(request):
             'low_confidence_warning': low_confidence_warning,
             'chart_labels': chart_labels,
             'chart_data': chart_data,
-            'selected_symptoms': selected_symptoms
+            'selected_symptoms': selected_symptoms,
+            'top_3': top_3
         }
         
         # Check if request is AJAX
@@ -111,7 +124,8 @@ def checker_view(request):
                 'specialist': disease_obj.specialist if disease_obj else 'General Physician',
                 'low_confidence': low_confidence_warning,
                 'chart_labels': json_lib.loads(chart_labels),
-                'chart_data': json_lib.loads(chart_data)
+                'chart_data': json_lib.loads(chart_data),
+                'top_3': top_3
             })
             
         return render(request, 'predictor/results.html', context)
