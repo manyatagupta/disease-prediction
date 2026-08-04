@@ -157,6 +157,15 @@
                             </div>
                         </div>
                         
+                        <!-- Secondary Predictions -->
+                        <div id="secondaryPredictionsContainer" class="hidden mt-6 space-y-4">
+                            <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
+                                <i class="fa-solid fa-list-ul text-amber-500"></i> Other Possible Conditions
+                            </h4>
+                            <div id="secondaryPredictionsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            </div>
+                        </div>
+                        
                         <!-- Chart Integration -->
                         <div class="mt-6 p-4 rounded-2xl bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 shadow-inner">
                             <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -300,6 +309,38 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.getElementById('resWarning').classList.remove('hidden');
                 } else {
                     document.getElementById('resWarning').classList.add('hidden');
+                }
+                
+                // Secondary Predictions
+                const secContainer = document.getElementById('secondaryPredictionsContainer');
+                const secList = document.getElementById('secondaryPredictionsList');
+                if (data.top_3 && data.top_3.length > 1) {
+                    secList.innerHTML = '';
+                    let hasSecondary = false;
+                    for (let i = 1; i < data.top_3.length; i++) {
+                        const condition = data.top_3[i];
+                        if (condition.confidence > 2.0) { // Only show if > 2% confidence
+                            hasSecondary = true;
+                            secList.innerHTML += `
+                                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors flex justify-between items-center">
+                                    <div>
+                                        <h5 class="font-bold text-slate-900 dark:text-white text-sm">${condition.name}</h5>
+                                        <span class="text-xs text-slate-500">${condition.specialist}</span>
+                                    </div>
+                                    <div class="px-2 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-lg border border-amber-200 dark:border-amber-500/20">
+                                        ${condition.confidence}%
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                    if (hasSecondary) {
+                        if (secContainer) secContainer.classList.remove('hidden');
+                    } else {
+                        if (secContainer) secContainer.classList.add('hidden');
+                    }
+                } else {
+                    if (secContainer) secContainer.classList.add('hidden');
                 }
                 
                 // Colorize confidence
