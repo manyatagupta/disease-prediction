@@ -43,16 +43,17 @@ def train_and_save_model():
         )
     print("Database populated successfully.")
     
-    print("Preparing data for training on the FULL dataset (memory optimized)...")
+    print("Preparing data for training (sampling 50000 rows to prevent MemoryError)...")
+    if len(df) > 50000:
+        df = df.sample(n=50000, random_state=42)
     X = df.drop(columns=['diseases'])
     y = df['diseases']
     
     import time
     start_time = time.time()
     
-    print("Training Naive Bayes model (extremely fast and highly accurate)...")
-    from sklearn.naive_bayes import MultinomialNB
-    clf = MultinomialNB()
+    print("Training Random Forest model (robust and accurate)...")
+    clf = RandomForestClassifier(n_estimators=50, max_depth=20, random_state=42, n_jobs=2)
     clf.fit(X, y)
     
     end_time = time.time()
