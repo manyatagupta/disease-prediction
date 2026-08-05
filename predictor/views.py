@@ -7,14 +7,57 @@ from django.contrib import messages
 from .models import Disease, Symptom, PredictionHistory
 from django.conf import settings
 from .apps import PredictorConfig
+from django.core.paginator import Paginator
+from django.db.models import Count, Avg
 
 def home_view(request):
     return render(request, 'predictor/home.html')
 
 @login_required
 def history_view(request):
-    history = PredictionHistory.objects.filter(user=request.user).order_by('-date')
-    return render(request, 'predictor/history.html', {'history': history})
+    all_history = PredictionHistory.objects.filter(user=request.user).order_by('-date')
+    
+    # Summary stats
+    total_predictions = all_history.count()
+    
+    most_frequent = None
+    if total_predictions > 0:
+        most_frequent_data = all_history.values('predicted_disease').annotate(count=Count('predicted_disease')).order_by('-count').first()
+        most_frequent = most_frequent_data['predicted_disease'] if most_frequent_data else None
+        
+    avg_conf = all_history.aggregate(Avg('confidence'))['confidence__avg']
+    avg_confidence = round(avg_conf, 1) if avg_conf else 0.0
+
+    # Pagination
+    paginator = Paginator(all_history, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    history_page = paginator.get_page(page_number)
+
+    context = {
+        'history': history_page,
+        'total_predictions': total_predictions,
+        'most_frequent_disease': most_frequent,
+        'avg_confidence': avg_confidence
+    }
+    return render(request, 'predictor/history.html', context)
+
+@login_required
+def delete_history_item(request, item_id):
+    if request.method == 'POST':
+        item = PredictionHistory.objects.filter(id=item_id, user=request.user).first()
+        if item:
+            item.delete()
+            messages.success(request, "Prediction record deleted successfully.")
+        else:
+            messages.error(request, "Record not found.")
+    return redirect('predictor:history')
+
+@login_required
+def clear_history(request):
+    if request.method == 'POST':
+        PredictionHistory.objects.filter(user=request.user).delete()
+        messages.success(request, "All prediction history has been cleared.")
+    return redirect('predictor:history')
 
 @login_required
 def checker_view(request):
