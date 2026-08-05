@@ -10,10 +10,37 @@
             <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Your History</h1>
             <p class="text-slate-600 dark:text-slate-400 transition-colors">View your past symptom assessments and AI predictions.</p>
         </div>
-        <a href="{% url 'predictor:checker' %}" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2">
-            <i class="fa-solid fa-stethoscope"></i> New Prediction
-        </a>
+        <div class="flex gap-3">
+            {% if history %}
+            <form action="{% url 'predictor:clear_history' %}" method="POST" onsubmit="return confirm('Are you sure you want to clear all your prediction history? This cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="px-6 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 rounded-xl font-medium transition-all flex items-center gap-2 border border-red-500/20">
+                    <i class="fa-solid fa-trash-can"></i> Clear All
+                </button>
+            </form>
+            {% endif %}
+            <a href="{% url 'predictor:checker' %}" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2">
+                <i class="fa-solid fa-stethoscope"></i> New Prediction
+            </a>
+        </div>
     </div>
+
+    {% if history %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+            <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Total Predictions</h3>
+            <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ total_predictions }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+            <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Most Frequent</h3>
+            <p class="text-xl font-bold text-slate-900 dark:text-white truncate">{{ most_frequent_disease|default:"None" }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+            <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Avg Confidence</h3>
+            <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ avg_confidence }}%</p>
+        </div>
+    </div>
+    {% endif %}
 
     <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm dark:shadow-xl transition-colors" data-aos="fade-up" data-aos-delay="100">
         {% if history %}
@@ -46,15 +73,42 @@
                             </div>
                         </td>
                         <td class="p-6 text-right">
-                            <button class="p-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Ask AI Doctor" onclick="window.openAIChat('Tell me about {{ item.predicted_disease }} and the symptoms: {{ item.symptoms_selected }}')">
-                                <i class="fa-solid fa-comment-medical text-lg"></i>
-                            </button>
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="p-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Ask AI Doctor" onclick="window.openAIChat('Tell me about {{ item.predicted_disease }} and the symptoms: {{ item.symptoms_selected }}')">
+                                    <i class="fa-solid fa-comment-medical text-lg"></i>
+                                </button>
+                                <form action="{% url 'predictor:delete_history_item' item.id %}" method="POST" class="inline" onsubmit="return confirm('Delete this record?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="p-2 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="Delete Record">
+                                        <i class="fa-solid fa-trash-can text-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        <!-- Pagination -->
+        {% if history.has_other_pages %}
+        <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div class="text-sm text-slate-500 dark:text-slate-400">
+                Showing page {{ history.number }} of {{ history.paginator.num_pages }}
+            </div>
+            <div class="flex gap-2">
+                {% if history.has_previous %}
+                <a href="?page={{ history.previous_page_number }}" class="px-3 py-1 text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Previous</a>
+                {% endif %}
+                
+                {% if history.has_next %}
+                <a href="?page={{ history.next_page_number }}" class="px-3 py-1 text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
         {% else %}
         <div class="text-center py-20 px-4">
             <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800/50 mb-6 text-slate-400 text-4xl shadow-inner transition-colors">
