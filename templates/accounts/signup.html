@@ -3,40 +3,76 @@
 {% block title %}Sign Up - MediPredict AI{% endblock %}
 
 {% block content %}
-<div style="max-width: 400px; margin: 4rem auto; text-align: center;">
-    <div class="glass-card">
-        <h2 class="text-gradient">Create Account</h2>
-        <p class="hero-subtitle" style="font-size: 1rem; margin-bottom: 2rem;">Join to get personalized AI predictions.</p>
+<div class="max-w-md mx-auto my-16 px-4 relative z-10">
+    <!-- Decorative elements behind card -->
+    <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl dark:bg-purple-600/30"></div>
+    <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl dark:bg-blue-600/30"></div>
+    
+    <div class="bg-white/80 dark:bg-slate-900/70 backdrop-blur-2xl border border-slate-200 dark:border-slate-700/50 rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden transition-all duration-300">
+        <!-- Top accent line -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
         
-        <form method="POST" style="text-align: left;">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-2">Create Account</h2>
+            <p class="text-slate-500 dark:text-slate-400">Join to get personalized AI predictions.</p>
+        </div>
+        
+        <form method="POST" class="space-y-5">
             {% csrf_token %}
             
             {% if form.non_field_errors %}
-                <div class="p-3 mb-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm">
+                <div class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm flex items-start gap-3">
+                    <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+                    <div>
                     {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
+                    </div>
                 </div>
             {% endif %}
 
+            <div class="space-y-4">
             {% for field in form %}
-            <div class="form-group">
-                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                <input type="{{ field.widget_type }}" name="{{ field.html_name }}" class="form-control" id="{{ field.id_for_label }}" required>
-                {% if field.errors %}
-                    <small style="color: #f87171;">{{ field.errors.0 }}</small>
-                {% endif %}
-                {% if field.help_text %}
-                    <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">{{ field.help_text }}</small>
-                {% endif %}
-            </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    <div class="relative group">
+                        <!-- Icon based on field type/name -->
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                            {% if 'password' in field.name.lower %}
+                                <i class="fa-solid fa-lock text-sm"></i>
+                            {% elif 'username' in field.name.lower %}
+                                <i class="fa-solid fa-user text-sm"></i>
+                            {% elif 'email' in field.name.lower %}
+                                <i class="fa-solid fa-envelope text-sm"></i>
+                            {% else %}
+                                <i class="fa-solid fa-pen text-sm"></i>
+                            {% endif %}
+                        </div>
+                        <input type="{{ field.widget_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="w-full bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400 dark:placeholder-slate-500" placeholder="Enter your {{ field.label|lower }}" required>
+                    </div>
+                    {% if field.errors %}
+                        <p class="mt-1 text-xs text-red-500 dark:text-red-400 flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> {{ field.errors.0 }}</p>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-500">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
             {% endfor %}
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign Up</button>
+            </div>
+            
+            <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-medium transition-all shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_25px_rgba(147,51,234,0.5)] transform hover:-translate-y-0.5 mt-4 flex items-center justify-center gap-2 relative overflow-hidden group">
+                <span class="relative z-10">Sign Up Now</span>
+                <i class="fa-solid fa-user-plus relative z-10 group-hover:scale-110 transition-transform"></i>
+                <!-- Button shine effect -->
+                <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
+            </button>
+            
+            <p class="text-center mt-6 text-sm text-slate-500 dark:text-slate-400">
+                Already have an account? <a href="{% url 'accounts:login' %}" class="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 hover:underline transition-all">Log in</a>
+            </p>
         </form>
-        
-        <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
-            Already have an account? <a href="{% url 'accounts:login' %}" style="color: var(--primary); text-decoration: none;">Log in</a>
-        </p>
     </div>
 </div>
 {% endblock content %}
