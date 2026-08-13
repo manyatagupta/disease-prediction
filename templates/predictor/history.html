@@ -27,22 +27,22 @@
 
     {% if history %}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+        <div class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] rounded-3xl p-6 shadow-sm dark:shadow-xl">
             <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Total Predictions</h3>
             <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ total_predictions }}</p>
         </div>
-        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+        <div class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] rounded-3xl p-6 shadow-sm dark:shadow-xl">
             <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Most Frequent</h3>
             <p class="text-xl font-bold text-slate-900 dark:text-white truncate">{{ most_frequent_disease|default:"None" }}</p>
         </div>
-        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+        <div class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] rounded-3xl p-6 shadow-sm dark:shadow-xl">
             <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Avg Confidence</h3>
             <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ avg_confidence }}%</p>
         </div>
     </div>
     {% endif %}
 
-    <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm dark:shadow-xl transition-colors" data-aos="fade-up" data-aos-delay="100">
+    <div class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] rounded-3xl overflow-hidden shadow-sm dark:shadow-xl transition-colors" data-aos="fade-up" data-aos-delay="100">
         {% if history %}
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
