@@ -53,7 +53,7 @@ def train_and_save_model():
     start_time = time.time()
     
     print("Training Random Forest model (robust and accurate)...")
-    clf = RandomForestClassifier(n_estimators=50, max_depth=20, random_state=42, n_jobs=2)
+    clf = RandomForestClassifier(n_estimators=150, max_depth=None, random_state=42, n_jobs=-1)
     clf.fit(X, y)
     
     end_time = time.time()
