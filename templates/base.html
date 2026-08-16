@@ -254,9 +254,14 @@
                     <p class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span> Online</p>
                 </div>
             </div>
-            <button id="closeAiChat" class="text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors p-2">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+            <div class="flex items-center gap-1">
+                <button id="exportAiChatBtn" class="text-slate-400 hover:text-red-500 transition-colors p-2" title="Download Chat as PDF">
+                    <i class="fa-solid fa-file-pdf text-lg"></i>
+                </button>
+                <button id="closeAiChat" class="text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Chat Messages -->
@@ -345,6 +350,7 @@
         const aiChatForm = document.getElementById('aiChatForm');
         const aiChatInput = document.getElementById('aiChatInput');
         const aiChatMessages = document.getElementById('aiChatMessages');
+        const exportAiChatBtn = document.getElementById('exportAiChatBtn');
         
         window.openAIChat = function(initialMessage = null) {
             aiChatModal.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
@@ -361,6 +367,53 @@
             closeAiChatBtn.addEventListener('click', () => {
                 aiChatModal.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
                 openAiChatBtn.classList.remove('scale-0', 'opacity-0');
+            });
+        }
+        
+        if (exportAiChatBtn) {
+            exportAiChatBtn.addEventListener('click', () => {
+                const chatClone = aiChatMessages.cloneNode(true);
+                chatClone.style.overflow = 'visible';
+                chatClone.style.maxHeight = 'none';
+                chatClone.style.height = 'auto';
+                chatClone.style.padding = '20px';
+                
+                // Hide scrollbars that might render
+                chatClone.classList.remove('overflow-y-auto', 'custom-scrollbar');
+                
+                // Create a temporary container
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.style.top = '-9999px';
+                tempContainer.style.width = '800px'; // Give it a fixed width for good PDF formatting
+                
+                // Apply dark mode styling if active
+                if (document.documentElement.classList.contains('dark')) {
+                    tempContainer.classList.add('dark');
+                    chatClone.style.backgroundColor = '#0f172a'; // slate-900 equivalent
+                } else {
+                    chatClone.style.backgroundColor = '#ffffff';
+                }
+                
+                tempContainer.appendChild(chatClone);
+                document.body.appendChild(tempContainer);
+                
+                const opt = {
+                    margin:       10,
+                    filename:     `MediPredict_AI_Diet_Plan.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                
+                const originalIcon = exportAiChatBtn.innerHTML;
+                exportAiChatBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-lg"></i>';
+                
+                html2pdf().set(opt).from(tempContainer).save().then(() => {
+                    exportAiChatBtn.innerHTML = originalIcon;
+                    document.body.removeChild(tempContainer);
+                });
             });
         }
         
