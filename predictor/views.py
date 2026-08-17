@@ -73,84 +73,35 @@ def checker_view(request):
             messages.error(request, "Please select at least one symptom.")
             return redirect('predictor:checker')
             
-        # Use the pre-loaded ML model
-        clf = PredictorConfig.ml_model
-        all_symptoms = PredictorConfig.all_symptoms
-        
-        if clf is None or all_symptoms is None:
+        from .services import make_prediction, PredictionError
+        try:
+            results = make_prediction(selected_symptoms)
+        except PredictionError as e:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 from django.http import JsonResponse
-                return JsonResponse({'success': False, 'error': 'Error: ML prediction model is not loaded. Please contact support.'})
-            messages.error(request, "Error: ML prediction model is not loaded. Please contact support.")
+                return JsonResponse({'success': False, 'error': str(e)})
+            messages.error(request, str(e))
             return redirect('predictor:checker')
-            
-        # Prepare input vector
-        # The selected_symptoms from the form are Title Cased and spaces instead of underscores.
-        # all_symptoms contains the raw CSV column names. We must match the formatting.
-        input_data = [1 if s.replace("_", " ").title() in selected_symptoms else 0 for s in all_symptoms]
-        input_df = pd.DataFrame([input_data], columns=all_symptoms)
         
-        # Predict
-        predicted_disease = clf.predict(input_df)[0]
-        probabilities = clf.predict_proba(input_df)[0]
-        
-        import json
-        class_probs = list(zip(clf.classes_, probabilities))
-        class_probs.sort(key=lambda x: x[1], reverse=True)
-        top_5 = class_probs[:5]
-        
-        # Using raw probabilities and normalizing the top 5 to sum to 100% for the chart
-        import numpy as np
-        probs = np.array([x[1] for x in top_5])
-        
-        top_5_sum = np.sum(probs)
-        if top_5_sum > 0:
-            normalized_top_5 = [(top_5[i][0], float(probs[i] / top_5_sum)) for i in range(len(top_5))]
-        else:
-            normalized_top_5 = top_5
-            
-        confidence_score = round(normalized_top_5[0][1] * 100, 2)
-        
-        # Extract Top 3 for UI
-        top_3 = []
-        for i in range(min(3, len(normalized_top_5))):
-            d_name = normalized_top_5[i][0]
-            d_conf = round(normalized_top_5[i][1] * 100, 2)
-            d_obj = Disease.objects.filter(name=d_name).first()
-            if d_obj:
-                top_3.append({
-                    'name': d_name,
-                    'confidence': d_conf,
-                    'severity': getattr(d_obj, 'severity', 'Moderate'),
-                    'description': d_obj.description,
-                    'precautions': d_obj.precautions,
-                    'specialist': d_obj.specialist
-                })
-        
-        chart_labels = json.dumps([x[0] for x in normalized_top_5])
-        chart_data = json.dumps([round(x[1] * 100, 2) for x in normalized_top_5])
-        
-        low_confidence_warning = confidence_score < 30.0
-        
-        disease_obj = Disease.objects.filter(name=predicted_disease).first()
+        disease_obj = results['disease_obj']
         
         if request.user.is_authenticated:
             PredictionHistory.objects.create(
                 user=request.user,
-                predicted_disease=predicted_disease,
-                confidence=confidence_score,
+                predicted_disease=results['predicted_disease'],
+                confidence=results['confidence_score'],
                 symptoms_selected=", ".join(selected_symptoms)
             )
             
         context = {
-            'predicted_disease': predicted_disease,
-            'confidence_score': confidence_score,
+            'predicted_disease': results['predicted_disease'],
+            'confidence_score': results['confidence_score'],
             'disease_info': disease_obj,
-            'low_confidence_warning': low_confidence_warning,
-            'chart_labels': chart_labels,
-            'chart_data': chart_data,
+            'low_confidence_warning': results['low_confidence_warning'],
+            'chart_labels': results['chart_labels'],
+            'chart_data': results['chart_data'],
             'selected_symptoms': selected_symptoms,
-            'top_3': top_3
+            'top_3': results['top_3']
         }
         
         # Check if request is AJAX
@@ -159,16 +110,16 @@ def checker_view(request):
             from django.http import JsonResponse
             return JsonResponse({
                 'success': True,
-                'predicted_disease': predicted_disease,
-                'confidence_score': confidence_score,
+                'predicted_disease': results['predicted_disease'],
+                'confidence_score': results['confidence_score'],
                 'severity': getattr(disease_obj, 'severity', 'Moderate') if disease_obj else 'Moderate',
                 'description': disease_obj.description if disease_obj else 'No description available.',
                 'precautions': disease_obj.precautions if disease_obj else 'Consult a doctor.',
-                'specialist': disease_obj.specialist if disease_obj else 'General Physician',
-                'low_confidence': low_confidence_warning,
-                'chart_labels': json_lib.loads(chart_labels),
-                'chart_data': json_lib.loads(chart_data),
-                'top_3': top_3
+                'specialist': getattr(disease_obj, 'recommended_doctor', 'General Physician') if disease_obj else 'General Physician',
+                'low_confidence': results['low_confidence_warning'],
+                'chart_labels': json_lib.loads(results['chart_labels']),
+                'chart_data': json_lib.loads(results['chart_data']),
+                'top_3': results['top_3']
             })
             
         return render(request, 'predictor/results.html', context)
