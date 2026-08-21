@@ -23,11 +23,14 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: '#050A15',
-                        darker: '#01040A',
-                        card: 'rgba(20, 25, 40, 0.7)',
-                        primary: '#38bdf8',
-                        secondary: '#10b981',
+                        blue: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b' },
+                        emerald: { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', 950: '#042f2e' },
+                        slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        dark: '#020617',
+                        darker: '#01030A',
+                        card: 'rgba(15, 23, 42, 0.65)',
+                        primary: '#6366f1',
+                        secondary: '#14b8a6',
                         accent: '#c084fc',
                     },
                     fontFamily: {
@@ -36,21 +39,28 @@
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'fade-in-down': 'fadeInDown 0.5s ease-out'
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'float-fast': 'float 4s ease-in-out infinite',
+                        'fade-in-down': 'fadeInDown 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+                        'shine': 'shine 2s infinite',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         float: {
-                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
-                            '50%': { transform: 'translateY(-20px) scale(1.05)' },
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
                         },
                         fadeInDown: {
-                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
-                        aurora: {
-                            '0%': { backgroundPosition: '0% 50%' },
-                            '50%': { backgroundPosition: '100% 50%' },
-                            '100%': { backgroundPosition: '0% 50%' }
+                        shine: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 10px rgba(99, 102, 241, 0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(99, 102, 241, 0.6)' }
                         }
                     }
                 }
@@ -84,10 +94,10 @@
     </div>
     
     <!-- Light Mode Background -->
-    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-slate-50 dark:hidden transition-all">
-        <div class="absolute inset-0 bg-grid opacity-30 z-0"></div>
-        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/10 blur-[120px]"></div>
-        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-emerald-500/10 blur-[120px]"></div>
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-mesh-light dark:hidden transition-all">
+        <div class="absolute inset-0 bg-grid opacity-20 z-0"></div>
+        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/10 blur-[120px] animate-[float_10s_ease-in-out_infinite]"></div>
+        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-purple-500/10 blur-[120px] animate-[float_12s_ease-in-out_infinite_reverse]"></div>
     </div>
 
     {% if user.is_authenticated %}
@@ -104,32 +114,32 @@
             
             <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
                 <div class="pt-2 pb-2 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Main</div>
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white transition-all group">
-                    <i class="fa-solid fa-border-all w-5 text-center text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"></i> Dashboard
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'home' %}bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 hover:text-blue-600 dark:hover:text-white{% endif %} transition-all group">
+                    <i class="fa-solid fa-border-all w-5 text-center {% if request.resolver_match.url_name == 'home' %}text-blue-500 dark:text-blue-400{% else %}text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400{% endif %} transition-colors"></i> Dashboard
                 </a>
-                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-white transition-all group">
-                    <i class="fa-solid fa-stethoscope w-5 text-center text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors"></i> Predict Disease
+                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'checker' %}bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 hover:text-emerald-600 dark:hover:text-white{% endif %} transition-all group">
+                    <i class="fa-solid fa-stethoscope w-5 text-center {% if request.resolver_match.url_name == 'checker' %}text-emerald-500 dark:text-emerald-400{% else %}text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-400{% endif %} transition-colors"></i> Predict Disease
                 </a>
-                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-purple-600 dark:hover:text-white transition-all group">
-                    <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors"></i> History
+                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'history' %}bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 hover:text-purple-600 dark:hover:text-white{% endif %} transition-all group">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center {% if request.resolver_match.url_name == 'history' %}text-purple-500 dark:text-purple-400{% else %}text-slate-400 group-hover:text-purple-500 dark:group-hover:text-purple-400{% endif %} transition-colors"></i> History
                 </a>
                 
                 <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">AI Tools</div>
-                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white transition-all group">
+                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-all group">
                     <i class="fa-solid fa-robot w-5 text-center text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"></i> AI Doctor
                 </a>
-                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-pink-600 dark:hover:text-white transition-all group">
-                    <i class="fa-solid fa-file-waveform w-5 text-center text-slate-400 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors"></i> Report Analyzer
+                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'analyze_report' %}bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 font-semibold{% else %}text-slate-600 dark:text-slate-300 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400{% endif %} transition-all group">
+                    <i class="fa-solid fa-file-waveform w-5 text-center {% if request.resolver_match.url_name == 'analyze_report' %}text-pink-500 dark:text-pink-400{% else %}text-slate-400 group-hover:text-pink-500 dark:group-hover:text-pink-400{% endif %} transition-colors"></i> Report Analyzer
                 </a>
                 
                 <div class="pt-6 pb-2 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Health</div>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-amber-600 dark:hover:text-white transition-all group">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 transition-all group">
                     <i class="fa-solid fa-chart-line w-5 text-center text-slate-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors"></i> Analytics
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-600 dark:hover:text-white transition-all group">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all group">
                     <i class="fa-solid fa-hospital w-5 text-center text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors"></i> Hospitals
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 transition-all group">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all group">
                     <i class="fa-solid fa-gear w-5 text-center text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors"></i> Settings
                 </a>
             </div>
@@ -242,9 +252,9 @@
     {% endif %}
 
     <!-- AI DOCTOR CHAT MODAL -->
-    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
+    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300 overflow-hidden">
         <!-- Chat Header -->
-        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl transition-colors">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 transition-colors">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     <i class="fa-solid fa-robot"></i>

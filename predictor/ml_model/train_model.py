@@ -43,9 +43,15 @@ def train_and_save_model():
         )
     print("Database populated successfully.")
     
-    print("Preparing data for training (sampling 50000 rows to prevent MemoryError)...")
-    if len(df) > 50000:
-        df = df.sample(n=50000, random_state=42)
+    print("Preparing data for training...")
+    print("Optimizing memory usage by downcasting integers...")
+    for col in df.select_dtypes(include=['int64']).columns:
+        df[col] = pd.to_numeric(df[col], downcast='integer')
+        
+    print("Sampling 100,000 rows to prevent MemoryError but maintain high accuracy...")
+    if len(df) > 100000:
+        df = df.sample(n=100000, random_state=42)
+
     X = df.drop(columns=['diseases'])
     y = df['diseases']
     
@@ -53,7 +59,8 @@ def train_and_save_model():
     start_time = time.time()
     
     print("Training Random Forest model (robust and accurate)...")
-    clf = RandomForestClassifier(n_estimators=150, max_depth=None, random_state=42, n_jobs=-1)
+    # Using n_jobs=1 to avoid joblib memory duplication during multiprocessing
+    clf = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42, n_jobs=1)
     clf.fit(X, y)
     
     end_time = time.time()

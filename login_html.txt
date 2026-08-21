@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MediPredict AI</title>
+    <script>
+        // Check local storage for theme or use system preference to prevent FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#050A15',
+                        darker: '#01040A',
+                        card: 'rgba(20, 25, 40, 0.7)',
+                        primary: '#38bdf8',
+                        secondary: '#10b981',
+                        accent: '#c084fc',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in-down': 'fadeInDown 0.5s ease-out'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                            '50%': { transform: 'translateY(-20px) scale(1.05)' },
+                        },
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        aurora: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="/static/css/index.css?v=2">
+</head>
+<body class="bg-slate-50 dark:bg-darker text-slate-900 dark:text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500/30 transition-colors duration-300">
+    
+    <!-- Cinematic Background Gradients & Orbs -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-slate-900 hidden dark:block transition-all">
+        <!-- Main Aurora -->
+        <div class="absolute -top-[30%] -left-[20%] w-[70vw] h-[70vw] rounded-full bg-cyan-600/20 blur-[150px] animate-[float_10s_ease-in-out_infinite] mix-blend-screen"></div>
+        <div class="absolute top-[30%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-purple-700/20 blur-[150px] animate-[float_14s_ease-in-out_infinite_reverse] mix-blend-screen"></div>
+        <div class="absolute -bottom-[20%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-emerald-600/15 blur-[120px] animate-[float_12s_ease-in-out_infinite] mix-blend-screen"></div>
+        
+        <!-- Glowing Orbs -->
+        <div class="absolute top-[15%] right-[25%] w-6 h-6 rounded-full bg-cyan-400 shadow-[0_0_30px_10px_rgba(34,211,238,0.5)] animate-pulse"></div>
+        <div class="absolute bottom-[25%] left-[15%] w-8 h-8 rounded-full bg-purple-500 shadow-[0_0_40px_12px_rgba(168,85,247,0.5)] animate-[pulse_4s_ease-in-out_infinite]"></div>
+    </div>
+    
+    <!-- Light Mode Background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-slate-50 dark:hidden transition-all">
+        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/10 blur-[120px]"></div>
+        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-emerald-500/10 blur-[120px]"></div>
+    </div>
+
+    
+    <!-- LANDING PAGE LAYOUT -->
+    <nav class="fixed w-full z-50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300" id="landing-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/" class="flex items-center gap-3 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400">
+                    <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict <span class="text-slate-800 dark:text-white font-light text-xl">AI</span>
+                </a>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">Features</a>
+                    <a href="#how-it-works" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">How it Works</a>
+                    <a href="#ai-doctor" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">AI Doctor</a>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <a href="/accounts/login/" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors hidden sm:block">Log in</a>
+                    <a href="/accounts/signup/" class="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] hover:-translate-y-0.5">
+                        Get Started
+                    </a>
+                    <button id="theme-toggle" class="w-10 h-10 ml-2 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden"></i>
+                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="flex-1 pt-20">
+        
+<div style="max-width: 400px; margin: 4rem auto; text-align: center;">
+    <div class="glass-card">
+        <h2 class="text-gradient">Welcome Back</h2>
+        <p class="hero-subtitle" style="font-size: 1rem; margin-bottom: 2rem;">Log in to access your prediction history.</p>
+        
+        <form method="POST" style="text-align: left;">
+            <input type="hidden" name="csrfmiddlewaretoken" value="3YjwxY8UgslzkTuvNph0Ii0PiXYLIKIo5t7xA8bm3F3MQheqSn8AyEImNF50rrAp">
+            
+            
+
+            
+            <div class="form-group">
+                <label class="form-label" for="id_username">Username</label>
+                <input type="text" name="username" class="form-control" id="id_username" required>
+                
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="id_password">Password</label>
+                <input type="password" name="password" class="form-control" id="id_password" required>
+                
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
+                Don't have an account? <a href="/accounts/signup/" style="color: var(--primary); text-decoration: none;">Sign up here</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+    </main>
+    
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 py-12 mt-20 backdrop-blur-lg transition-colors">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <a href="/" class="flex items-center justify-center gap-2 text-xl font-bold text-slate-800 dark:text-white mb-6">
+                <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict AI
+            </a>
+            <p class="text-slate-600 dark:text-slate-500 mb-6 max-w-md mx-auto">Empowering global healthcare with advanced Artificial Intelligence. Accurate, fast, and reliable.</p>
+            <p class="text-slate-500 dark:text-slate-600 text-sm">&copy; 2026 MediPredict AI. All rights reserved.</p>
+        </div>
+    </footer>
+    
+
+    <!-- AI DOCTOR CHAT MODAL -->
+    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
+        <!-- Chat Header -->
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl transition-colors">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="text-slate-900 dark:text-white font-bold text-sm">Grok AI Doctor</h4>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span> Online</p>
+                </div>
+            </div>
+            <button id="closeAiChat" class="text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-white dark:bg-slate-900/50 transition-colors">
+            <!-- Initial AI Message -->
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1">
+                    <i class="fa-solid fa-robot text-xs"></i>
+                </div>
+                <div class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-200 dark:border-slate-700 shadow-sm max-w-[80%] transition-colors">
+                    Hello! I'm your Grok AI health assistant. You can ask me about your symptoms, get general precautions, or discuss your diet. How can I help you today?
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl transition-colors">
+            <form id="aiChatForm" class="flex items-center gap-2">
+                <input type="hidden" name="csrfmiddlewaretoken" value="3YjwxY8UgslzkTuvNph0Ii0PiXYLIKIo5t7xA8bm3F3MQheqSn8AyEImNF50rrAp">
+                <input type="text" id="aiChatInput" placeholder="Type a medical question..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                <button type="submit" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-colors flex-shrink-0 shadow-[0_0_10px_rgba(37,99,235,0.2)]">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Floating AI Button -->
+    <button id="openAiChat" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center text-xl z-40 transition-transform hover:scale-110">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50,
+        });
+        
+        // Dark mode logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Change the icons inside the button based on previous settings
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function() {
+                // toggle icons inside button
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+
+                // if set via local storage previously
+                if (localStorage.getItem('theme')) {
+                    if (localStorage.getItem('theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    }
+                // if NOT set via local storage previously
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                }
+            });
+        }
+
+        // AI Chat Modal Logic
+        const aiChatModal = document.getElementById('aiChatModal');
+        const openAiChatBtn = document.getElementById('openAiChat');
+        const closeAiChatBtn = document.getElementById('closeAiChat');
+        const aiChatForm = document.getElementById('aiChatForm');
+        const aiChatInput = document.getElementById('aiChatInput');
+        const aiChatMessages = document.getElementById('aiChatMessages');
+        
+        window.openAIChat = function(initialMessage = null) {
+            aiChatModal.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
+            openAiChatBtn.classList.add('scale-0', 'opacity-0');
+            
+            if (initialMessage) {
+                aiChatInput.value = initialMessage;
+                aiChatForm.dispatchEvent(new Event('submit'));
+            }
+        };
+
+        if (openAiChatBtn && aiChatModal && closeAiChatBtn) {
+            openAiChatBtn.addEventListener('click', () => window.openAIChat());
+            closeAiChatBtn.addEventListener('click', () => {
+                aiChatModal.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
+                openAiChatBtn.classList.remove('scale-0', 'opacity-0');
+            });
+        }
+        
+        window.aiChatHistory = [];
+        
+        function formatMarkdown(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
+        if (aiChatForm) {
+            aiChatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = aiChatInput.value.trim();
+                if (!message) return;
+                
+                window.aiChatHistory.push({role: 'user', content: message});
+                
+                aiChatMessages.innerHTML += `
+                    <div class="flex items-start gap-3 flex-row-reverse">
+                        <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-white flex-shrink-0 mt-1 shadow-sm transition-colors">
+                            <i class="fa-solid fa-user text-xs"></i>
+                        </div>
+                        <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[80%]">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                aiChatInput.value = '';
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                
+                const responseId = 'resp-' + Date.now();
+                aiChatMessages.innerHTML += `
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-robot text-xs"></i>
+                        </div>
+                        <div id="${responseId}" class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-200 dark:border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body transition-colors">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Grok is thinking...
+                        </div>
+                    </div>
+                `;
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                
+                try {
+                    const response = await fetch('/ai/chat/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ messages: window.aiChatHistory })
+                    });
+                    
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    let fullResponse = "";
+                    let isFirstChunk = true;
+                    const respElement = document.getElementById(responseId);
+                    
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, {stream: true});
+                        const lines = chunk.split('\n');
+                        
+                        for (let line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const dataStr = line.substring(6);
+                                if (dataStr === '[DONE]') continue;
+                                
+                                try {
+                                    const data = JSON.parse(dataStr);
+                                    if (data.content) {
+                                        if (isFirstChunk) {
+                                            respElement.innerHTML = '';
+                                            isFirstChunk = false;
+                                        }
+                                        fullResponse += data.content;
+                                        respElement.innerHTML = formatMarkdown(fullResponse);
+                                        aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+                                    }
+                                } catch (e) {}
+                            }
+                        }
+                    }
+                    
+                    window.aiChatHistory.push({role: 'assistant', content: fullResponse});
+                    
+                } catch (err) {
+                    const respElement = document.getElementById(responseId);
+                    respElement.classList.add('text-red-600', 'dark:text-red-400');
+                    respElement.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Connection error. Please try again.';
+                }
+            });
+        }
+    </script>
+    
+</body>
+</html>

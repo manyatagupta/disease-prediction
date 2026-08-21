@@ -5,78 +5,111 @@
 {% block dashboard_content %}
 <div class="animate-fade-in-down max-w-7xl mx-auto">
     
-    <div class="mb-8">
-        <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 transition-colors tracking-tight">AI Diagnostics Report</h1>
-        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors text-lg">Your symptoms have been analyzed. Here is the AI-generated diagnostic overview.</p>
+    <div class="mb-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 mb-4 tracking-tight">AI Diagnostics Report</h1>
+        <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg">Your symptoms have been analyzed. Here is the AI-generated diagnostic overview.</p>
     </div>
 
-    <div id="resultData" class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] rounded-3xl p-6 lg:p-10 shadow-md dark:shadow-2xl relative overflow-hidden transition-colors">
-        <!-- Abstract Glow -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-colors"></div>
+    <div id="resultData" class="bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl backdrop-saturate-200 border border-white/60 dark:border-white/10 shadow-[0_15px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.4)] rounded-[2.5rem] p-8 lg:p-12 relative overflow-hidden transition-all duration-500 group">
+        <!-- Abstract Glows -->
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400/40 to-indigo-500/40 dark:from-blue-600/20 dark:to-indigo-600/20 rounded-full blur-[80px] pointer-events-none animate-pulse" style="animation-duration: 4s;"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-tr from-emerald-400/40 to-teal-500/40 dark:from-emerald-600/20 dark:to-teal-600/20 rounded-full blur-[80px] pointer-events-none animate-pulse" style="animation-duration: 5s; animation-delay: 1s;"></div>
         
         <div class="relative z-10">
-            <div class="flex items-start justify-between mb-8">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-blue-200 dark:border-blue-500/20 transition-colors">AI Prediction</span>
-                        <span class="px-3 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-amber-200 dark:border-amber-500/20 transition-colors">Moderate</span>
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-10">
+                <div class="text-center md:text-left flex-1">
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-4">
+                        <span class="px-4 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-500/20 dark:to-indigo-500/20 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-widest rounded-full border border-blue-200/50 dark:border-blue-500/30 shadow-sm">AI Prediction</span>
+                        {% if confidence_score >= 80 %}
+                        <span class="px-4 py-1.5 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-500/20 dark:to-teal-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-black uppercase tracking-widest rounded-full border border-emerald-200/50 dark:border-emerald-500/30 shadow-sm">High Confidence</span>
+                        {% elif confidence_score >= 50 %}
+                        <span class="px-4 py-1.5 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-500/20 dark:to-orange-500/20 text-amber-700 dark:text-amber-300 text-xs font-black uppercase tracking-widest rounded-full border border-amber-200/50 dark:border-amber-500/30 shadow-sm">Moderate</span>
+                        {% else %}
+                        <span class="px-4 py-1.5 bg-gradient-to-r from-red-100 to-rose-100 dark:from-red-500/20 dark:to-rose-500/20 text-red-700 dark:text-red-300 text-xs font-black uppercase tracking-widest rounded-full border border-red-200/50 dark:border-red-500/30 shadow-sm">Low Confidence</span>
+                        {% endif %}
                     </div>
-                    <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white transition-colors">{{ predicted_disease }}</h2>
+                    <h2 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 pb-2 drop-shadow-sm">{{ predicted_disease }}</h2>
                 </div>
-                <div class="text-right">
-                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-900 border-4 border-emerald-500 dark:border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-colors relative">
-                        <span class="text-2xl font-black {% if confidence_score >= 80 %}text-emerald-600 dark:text-emerald-400{% elif confidence_score >= 50 %}text-amber-600 dark:text-amber-400{% else %}text-red-600 dark:text-red-400{% endif %}">{{ confidence_score }}%</span>
+                
+                <div class="flex flex-col items-center">
+                    <!-- SVG Radial Progress -->
+                    <div class="relative flex items-center justify-center">
+                        <svg class="transform -rotate-90 w-32 h-32 drop-shadow-xl">
+                            <circle cx="64" cy="64" r="54" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-100 dark:text-slate-800" />
+                            <circle cx="64" cy="64" r="54" stroke="currentColor" stroke-width="12" fill="transparent" 
+                                    stroke-dasharray="339.292" 
+                                    stroke-dashoffset="calc(339.292 - (339.292 * {{ confidence_score }}) / 100)" 
+                                    stroke-linecap="round"
+                                    class="{% if confidence_score >= 80 %}text-emerald-500 dark:text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]{% elif confidence_score >= 50 %}text-amber-500 dark:text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]{% else %}text-red-500 dark:text-red-400 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]{% endif %} transition-all duration-1500 ease-out" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center flex-col">
+                            <span class="text-3xl font-black {% if confidence_score >= 80 %}text-emerald-600 dark:text-emerald-400{% elif confidence_score >= 50 %}text-amber-600 dark:text-amber-400{% else %}text-red-600 dark:text-red-400{% endif %}">{{ confidence_score }}<span class="text-lg">%</span></span>
+                        </div>
                     </div>
-                    <div class="text-[10px] text-slate-500 mt-3 font-bold tracking-widest">CONFIDENCE</div>
+                    <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-4 font-black tracking-[0.3em] uppercase">Match Score</div>
                 </div>
             </div>
             
             {% if low_confidence_warning %}
-            <div class="mb-6 p-4 rounded-xl bg-amber-100 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-start gap-3 transition-colors">
-                <i class="fa-solid fa-circle-exclamation text-amber-600 dark:text-amber-400 mt-1"></i>
-                <p class="text-amber-800 dark:text-amber-200/80 text-sm">Low confidence score. Your symptoms are generalized and may not strongly match a specific condition.</p>
+            <div class="mb-8 p-5 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-start gap-4 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                <div class="p-2 bg-amber-100 dark:bg-amber-500/20 rounded-full">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 dark:text-amber-400 text-lg"></i>
+                </div>
+                <div>
+                    <h5 class="font-bold text-amber-900 dark:text-amber-200 mb-1">Uncertain Prediction</h5>
+                    <p class="text-amber-800/80 dark:text-amber-200/70 text-sm leading-relaxed">The confidence score is low. Your symptoms may be generalized or incomplete. Please consult a healthcare professional for a proper diagnosis.</p>
+                </div>
             </div>
             {% endif %}
 
-            <div class="space-y-6">
-                <div>
-                    <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
-                        <i class="fa-solid fa-circle-info text-blue-500"></i> Description
+            <div class="space-y-8">
+                <div class="bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-inner">
+                    <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-align-left text-blue-500"></i> Clinical Description
                     </h4>
-                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed transition-colors">{{ disease_info.description|default:"No description available." }}</p>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed text-lg">{{ disease_info.description|default:"No description available." }}</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
-                        <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-shield-virus text-emerald-500"></i> Precautions
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-emerald-500/20 transition-colors"></div>
+                        <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-virus text-emerald-500 text-lg"></i> Recommended Precautions
                         </h4>
-                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed transition-colors">{{ disease_info.precautions|default:"Consult a doctor." }}</p>
+                        <p class="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ disease_info.precautions|default:"Consult a doctor." }}</p>
                     </div>
-                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors">
-                        <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-user-doctor text-purple-500"></i> Specialist
+                    <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-purple-500/20 transition-colors"></div>
+                        <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-user-doctor text-purple-500 text-lg"></i> Consult Specialist
                         </h4>
-                        <p class="text-slate-900 dark:text-white text-sm leading-relaxed font-medium transition-colors">{{ disease_info.specialist|default:"General Physician" }}</p>
+                        <p class="text-slate-900 dark:text-white text-xl font-black tracking-tight">{{ disease_info.specialist|default:"General Physician" }}</p>
                     </div>
                 </div>
                 
                 {% if top_3|length > 1 %}
                 <!-- Secondary Predictions -->
-                <div class="mt-6 space-y-4">
-                    <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
-                        <i class="fa-solid fa-list-ul text-amber-500"></i> Other Possible Conditions
+                <div class="mt-8">
+                    <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-microscope text-amber-500"></i> Differential Diagnosis
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {% for condition in top_3 %}
                             {% if forloop.counter > 1 and condition.confidence > 2.0 %}
-                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 transition-colors flex justify-between items-center">
-                                <div>
-                                    <h5 class="font-bold text-slate-900 dark:text-white text-sm">{{ condition.name }}</h5>
-                                    <span class="text-xs text-slate-500">{{ condition.specialist }}</span>
+                            <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h5 class="font-bold text-slate-900 dark:text-white">{{ condition.name }}</h5>
+                                        <span class="text-xs font-semibold text-slate-500">{{ condition.specialist }}</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-lg font-black text-slate-700 dark:text-slate-300">{{ condition.confidence }}%</span>
+                                    </div>
                                 </div>
-                                <div class="px-2 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-lg border border-amber-200 dark:border-amber-500/20">
-                                    {{ condition.confidence }}%
+                                <!-- Mini Progress Bar -->
+                                <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 mt-2 overflow-hidden">
+                                    <div class="bg-slate-400 dark:bg-slate-500 h-2 rounded-full" style="width: {{ condition.confidence }}%"></div>
                                 </div>
                             </div>
                             {% endif %}
@@ -86,28 +119,36 @@
                 {% endif %}
                 
                 <!-- Chart Integration -->
-                <div class="mt-6 p-4 rounded-2xl bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 shadow-inner">
-                    <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-pie text-indigo-500"></i> Probability Distribution
+                <div class="mt-8 p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-simple text-indigo-500"></i> Probability Analysis
                     </h4>
-                    <div class="relative h-64 w-full">
+                    <div class="relative h-72 w-full">
                         <canvas id="probabilityChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Actions -->
-                <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 no-print" id="actionButtons">
-                    <button id="downloadPdfBtn" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2 transition-colors text-slate-700 dark:text-white font-bold shadow-sm hover:shadow-md group">
-                        <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
-                        <span class="text-sm">Download Report</span>
+                <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 no-print" id="actionButtons">
+                    <button id="downloadPdfBtn" class="w-full py-5 px-4 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-2 border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center gap-3 transition-all text-slate-700 dark:text-white font-bold shadow-sm hover:shadow-lg hover:-translate-y-1 group">
+                        <div class="p-3 bg-red-50 dark:bg-red-500/10 rounded-full group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+                        </div>
+                        <span class="text-sm tracking-wide">Download PDF</span>
                     </button>
-                    <button id="getDietPlanBtn" class="w-full p-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
-                        <i class="fa-solid fa-apple-whole text-2xl group-hover:animate-bounce"></i>
-                        <span class="text-sm">Get Diet Plan</span>
+                    <button id="getDietPlanBtn" class="w-full py-5 px-4 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 hover:from-emerald-500 hover:to-teal-700 text-white font-bold shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-3 group overflow-hidden relative">
+                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
+                        <div class="p-3 bg-white/20 rounded-full group-hover:animate-bounce relative z-10">
+                            <i class="fa-solid fa-apple-whole text-xl"></i>
+                        </div>
+                        <span class="text-sm tracking-wide relative z-10">Get Diet Plan</span>
                     </button>
-                    <a href="{% url 'predictor:checker' %}" class="w-full p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-[0_0_15px_rgba(79,70,229,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
-                        <i class="fa-solid fa-rotate-left text-2xl group-hover:-rotate-45 transition-transform"></i>
-                        <span class="text-sm">Check Again</span>
+                    <a href="{% url 'predictor:checker' %}" class="w-full py-5 px-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold shadow-[0_10px_25px_rgba(79,70,229,0.3)] hover:shadow-[0_15px_35px_rgba(79,70,229,0.4)] hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                        <div class="p-3 bg-white/20 rounded-full group-hover:-rotate-180 transition-transform duration-500 relative z-10">
+                            <i class="fa-solid fa-rotate-left text-xl"></i>
+                        </div>
+                        <span class="text-sm tracking-wide relative z-10">Check Again</span>
                     </a>
                 </div>
             </div>

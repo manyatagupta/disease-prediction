@@ -91,17 +91,21 @@
             <!-- Loading State -->
             <div id="resultLoading" class="hidden flex-1 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-blue-300 dark:border-blue-500/50 rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] shadow-[0_0_40px_rgba(59,130,246,0.2)] transition-all duration-500 relative overflow-hidden">
                 <!-- Scanning line animation -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-blue-500 shadow-[0_0_15px_#3b82f6] animate-[translateY_2s_ease-in-out_infinite] z-0"></div>
-                <div class="relative w-28 h-28 mb-8 z-10">
-                    <div class="absolute inset-0 border-4 border-slate-200 dark:border-slate-700 rounded-full"></div>
-                    <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-                    <div class="absolute inset-0 border-4 border-purple-500/50 rounded-full border-b-transparent animate-[spin_1.5s_linear_infinite_reverse]"></div>
-                    <div class="absolute inset-0 flex items-center justify-center text-blue-600 dark:text-blue-400 text-3xl">
+                <div class="absolute top-0 left-0 w-full h-1 bg-blue-400 shadow-[0_0_15px_#3b82f6] animate-[translateY_2s_ease-in-out_infinite] z-0 mix-blend-screen"></div>
+                <div class="absolute inset-0 bg-blue-500/5 bg-grid mix-blend-overlay z-0 animate-[pulse_4s_ease-in-out_infinite]"></div>
+                
+                <div class="relative w-32 h-32 mb-8 z-10 group">
+                    <!-- Outer glowing ring -->
+                    <div class="absolute inset-[-10px] bg-blue-500/20 rounded-full blur-xl animate-pulse group-hover:bg-blue-500/40 transition-all"></div>
+                    <div class="absolute inset-0 border-4 border-slate-200/50 dark:border-slate-700/50 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-[spin_1s_linear_infinite]"></div>
+                    <div class="absolute inset-2 border-4 border-purple-500/60 rounded-full border-b-transparent border-l-transparent animate-[spin_1.5s_linear_infinite_reverse]"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-blue-600 dark:text-blue-400 text-4xl shadow-blue-500/50 drop-shadow-lg">
                         <i class="fa-solid fa-brain animate-pulse"></i>
                     </div>
                 </div>
-                <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-3 tracking-tight z-10">Analyzing Biomarkers...</h3>
-                <p class="text-blue-700 dark:text-blue-300 font-medium z-10 animate-pulse">Cross-referencing neural network with 246,000+ medical records.</p>
+                <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400 mb-3 tracking-tight z-10">Neural Analysis Active...</h3>
+                <p class="text-blue-700 dark:text-blue-300 font-medium z-10 animate-pulse bg-blue-50 dark:bg-blue-900/30 px-4 py-1.5 rounded-full border border-blue-200 dark:border-blue-800/50 mt-2">Cross-referencing with 246,000+ medical records</p>
             </div>
             
             <!-- Result Data -->
@@ -236,10 +240,10 @@ document.addEventListener("DOMContentLoaded", function() {
             if (cb.checked) {
                 count++;
                 const badge = document.createElement('div');
-                badge.className = 'px-3 py-1.5 bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium flex items-center gap-2 animate-fade-in-down transition-colors';
+                badge.className = 'px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg text-sm font-semibold flex items-center gap-2 animate-fade-in-down shadow-[0_0_10px_rgba(59,130,246,0.3)] hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all border border-blue-400/50';
                 badge.innerHTML = `
                     ${cb.value}
-                    <button type="button" class="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-white remove-badge" data-value="${cb.value}">
+                    <button type="button" class="text-white/70 hover:text-white transition-colors remove-badge" data-value="${cb.value}">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 `;
