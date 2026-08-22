@@ -6,15 +6,16 @@
 <div class="animate-fade-in-down max-w-7xl mx-auto">
     
     <div class="mb-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest mb-4">
-            <span class="relative flex h-2 w-2">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest mb-4 backdrop-blur-sm shadow-sm relative overflow-hidden">
+            <div class="absolute inset-0 bg-white/20 dark:bg-white/5 translate-x-[-100%] animate-[shine_3s_infinite_ease-in-out]"></div>
+            <span class="relative flex h-2.5 w-2.5">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
             </span>
             Neural Analysis Engine
         </div>
-        <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 transition-colors tracking-tight">AI Diagnostics Console</h1>
-        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors text-lg">Input your biomarkers and symptoms. Our advanced AI model will cross-reference them against 246,000+ medical records to predict the most likely condition.</p>
+        <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-200 dark:to-white mb-4 transition-colors tracking-tight drop-shadow-sm">AI Diagnostics Console</h1>
+        <p class="text-slate-600 dark:text-slate-400 max-w-2xl transition-colors text-lg md:text-xl font-medium leading-relaxed">Input your biomarkers and symptoms. Our advanced AI model will cross-reference them against <span class="text-blue-600 dark:text-blue-400 font-bold">246,000+ medical records</span> to predict the most likely condition.</p>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
@@ -28,12 +29,12 @@
                     {% csrf_token %}
                     
                     <!-- Search Input -->
-                    <div class="relative mb-6">
+                    <div class="relative mb-6 group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 transition-colors">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i class="fa-solid fa-magnifying-glass text-blue-500/70 group-focus-within:text-blue-500 transition-colors"></i>
                         </div>
                         <input type="text" id="symptomSearch" placeholder="Search symptoms (e.g., headache, fever)..." 
-                               class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                               class="w-full pl-12 pr-4 py-3.5 bg-white/60 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-sm">
                     </div>
                     
                     <!-- Selected Symptoms Badges -->
@@ -42,12 +43,14 @@
                     </div>
 
                     <!-- Symptoms List -->
-                    <div class="bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 h-96 overflow-y-auto custom-scrollbar mb-6 transition-colors">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="symptomsList">
+                    <div class="bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 h-[420px] overflow-y-auto custom-scrollbar mb-6 transition-colors shadow-inner relative">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-50/80 dark:to-slate-800/80 pointer-events-none h-12 bottom-0 z-10 sticky"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-8" id="symptomsList">
                             {% for symptom in symptoms %}
-                            <label class="symptom-item flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/50 cursor-pointer transition-all" data-name="{{ symptom.name|lower }}">
-                                <input type="checkbox" name="symptoms" value="{{ symptom.name }}" class="symptom-checkbox w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 dark:text-blue-500 focus:ring-blue-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 bg-white dark:bg-slate-700 accent-blue-600 dark:accent-blue-500 transition-all">
-                                <span class="text-slate-700 dark:text-slate-300 font-medium select-none transition-colors">{{ symptom.name }}</span>
+                            <label class="symptom-item group flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 cursor-pointer transition-all duration-300 relative overflow-hidden has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20 has-[:checked]:border-blue-500 dark:has-[:checked]:border-blue-400 has-[:checked]:shadow-[0_0_15px_rgba(59,130,246,0.15)]" data-name="{{ symptom.name|lower }}">
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/10 to-purple-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-x-[-100%] group-hover:translate-x-[100%]"></div>
+                                <input type="checkbox" name="symptoms" value="{{ symptom.name }}" class="symptom-checkbox peer w-5 h-5 rounded-md border-slate-300 dark:border-slate-600 text-blue-600 dark:text-blue-500 focus:ring-blue-500 focus:ring-offset-0 bg-white dark:bg-slate-700 transition-all cursor-pointer shadow-sm">
+                                <span class="text-slate-700 dark:text-slate-300 font-medium select-none transition-colors peer-checked:text-blue-700 dark:peer-checked:text-blue-300 peer-checked:font-bold relative z-10">{{ symptom.name }}</span>
                             </label>
                             {% endfor %}
                         </div>
@@ -77,15 +80,16 @@
         <!-- Results Section -->
         <div class="w-full lg:w-1/2 flex flex-col">
             <!-- Initial State -->
-            <div id="resultPlaceholder" class="flex-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl backdrop-saturate-150 border-2 border-white/40 dark:border-white/10 shadow-inner border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] transition-all duration-500 shadow-inner group">
-                <div class="relative w-24 h-24 mb-6">
-                    <div class="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-75"></div>
-                    <div class="relative w-24 h-24 rounded-full bg-gradient-to-tr from-blue-100 to-slate-100 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-blue-500 dark:text-blue-400 text-4xl shadow-lg border border-white/50 dark:border-slate-600 transition-transform group-hover:scale-110 duration-300">
-                        <i class="fa-solid fa-robot"></i>
+            <div id="resultPlaceholder" class="flex-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl backdrop-saturate-150 border border-slate-200/50 dark:border-slate-700/50 shadow-inner border-dashed rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center min-h-[400px] transition-all duration-500 relative overflow-hidden group hover:bg-white/60 dark:hover:bg-slate-800/50">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="relative w-28 h-28 mb-6 group-hover:-translate-y-2 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-75 blur-md"></div>
+                    <div class="relative w-28 h-28 rounded-full bg-gradient-to-tr from-blue-100 to-white dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-blue-500 dark:text-blue-400 text-5xl shadow-xl border border-white/80 dark:border-slate-600 transition-transform group-hover:scale-110 duration-500 group-hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                        <i class="fa-solid fa-robot drop-shadow-md"></i>
                     </div>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3 transition-colors tracking-tight">System Ready</h3>
-                <p class="text-slate-500 max-w-sm transition-colors font-medium">Select your biomarkers on the left and initialize scan to receive an AI-powered diagnostic overview.</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-3 transition-colors tracking-tight z-10">System Ready</h3>
+                <p class="text-slate-500 dark:text-slate-400 max-w-sm transition-colors text-lg font-medium z-10">Select your biomarkers on the left and initialize scan to receive an AI-powered diagnostic overview.</p>
             </div>
             
             <!-- Loading State -->
@@ -240,11 +244,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if (cb.checked) {
                 count++;
                 const badge = document.createElement('div');
-                badge.className = 'px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg text-sm font-semibold flex items-center gap-2 animate-fade-in-down shadow-[0_0_10px_rgba(59,130,246,0.3)] hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all border border-blue-400/50';
+                badge.className = 'px-3 py-1.5 bg-white/40 dark:bg-slate-800/60 backdrop-blur-md text-slate-800 dark:text-white rounded-xl text-sm font-semibold flex items-center gap-2 animate-fade-in-down shadow-sm border border-slate-200 dark:border-slate-700/50 hover:bg-white/60 dark:hover:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-all group';
                 badge.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]"></span>
                     ${cb.value}
-                    <button type="button" class="text-white/70 hover:text-white transition-colors remove-badge" data-value="${cb.value}">
-                        <i class="fa-solid fa-xmark"></i>
+                    <button type="button" class="text-slate-400 hover:text-red-500 transition-colors remove-badge ml-1 focus:outline-none" data-value="${cb.value}">
+                        <i class="fa-solid fa-xmark group-hover:scale-110 transition-transform"></i>
                     </button>
                 `;
                 selectedContainer.appendChild(badge);
