@@ -5,7 +5,8 @@ import joblib
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
 # Set up Django environment
 import pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent))
@@ -58,23 +59,61 @@ def train_and_save_model():
     import time
     start_time = time.time()
     
-    print("Training Random Forest model (robust and accurate)...")
+    print("Hyperparameter tuning Random Forest with RandomizedSearchCV...")
+    # Base classifier with balanced class weights to handle any imbalances
     # Using n_jobs=1 to avoid joblib memory duplication during multiprocessing
-    clf = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42, n_jobs=1)
+    rf = RandomForestClassifier(random_state=42, class_weight='balanced', n_jobs=1)
+    
+    # Define a smaller parameter grid for RandomizedSearch to save time
+    param_grid = {
+        'n_estimators': [100, 150],
+        'max_depth': [None, 30, 50],
+        'min_samples_split': [2, 5],
+        'min_samples_leaf': [1, 2]
+    }
+    
+    # We use cv=3 to speed up the tuning process
+    search = RandomizedSearchCV(
+        estimator=rf, 
+        param_distributions=param_grid, 
+        n_iter=5, # Try 5 random combinations
+        cv=3, 
+        scoring='accuracy', 
+        random_state=42, 
+        n_jobs=1
+    )
+    
+    search.fit(X, y)
+    best_rf = search.best_estimator_
+    print(f"Best hyperparameters found: {search.best_params_}")
+    
+    print("Extracting feature importances...")
+    # Extract feature importances from the best uncalibrated model
+    feature_importances = best_rf.feature_importances_
+    
+    print("Training final Calibrated model using 'isotonic' method (best for large datasets)...")
+    # 'isotonic' calibration often works better than 'sigmoid' for large datasets
+    clf = CalibratedClassifierCV(estimator=best_rf, method='isotonic', cv=3, n_jobs=1)
     clf.fit(X, y)
     
     end_time = time.time()
-    print(f"Model trained in {end_time - start_time:.2f} seconds.")
+    print(f"Model tuned, trained and calibrated in {end_time - start_time:.2f} seconds.")
     
-    print(f"Model accuracy on training sample: {clf.score(X, y):.2f}")
+    print(f"Final Calibrated Model accuracy on training sample: {clf.score(X, y):.2f}")
     
-    # Save the model and the symptom list
     model_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Save the calibrated model
     joblib.dump(clf, os.path.join(model_dir, "model.pkl"), compress=3)
     
     # Save the original columns as the expected features
     joblib.dump(symptoms_cols, os.path.join(model_dir, "symptoms_list.pkl"))
-    print("Model and symptoms list saved successfully.")
+    
+    # Save feature importances mapping
+    importance_dict = dict(zip(symptoms_cols, feature_importances))
+    joblib.dump(importance_dict, os.path.join(model_dir, "feature_importances.pkl"), compress=3)
+    
+    print("Model, symptoms list, and feature importances saved successfully.")
 
 if __name__ == "__main__":
     train_and_save_model()

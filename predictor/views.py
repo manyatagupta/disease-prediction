@@ -101,7 +101,8 @@ def checker_view(request):
             'chart_labels': results['chart_labels'],
             'chart_data': results['chart_data'],
             'selected_symptoms': selected_symptoms,
-            'top_3': results['top_3']
+            'top_3': results['top_3'],
+            'key_symptoms': results['key_symptoms']
         }
         
         # Check if request is AJAX
@@ -119,7 +120,8 @@ def checker_view(request):
                 'low_confidence': results['low_confidence_warning'],
                 'chart_labels': json_lib.loads(results['chart_labels']),
                 'chart_data': json_lib.loads(results['chart_data']),
-                'top_3': results['top_3']
+                'top_3': results['top_3'],
+                'key_symptoms': results['key_symptoms']
             })
             
         return render(request, 'predictor/results.html', context)

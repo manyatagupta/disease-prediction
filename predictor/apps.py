@@ -8,6 +8,7 @@ class PredictorConfig(AppConfig):
     
     ml_model = None
     all_symptoms = None
+    feature_importances = None
 
     def ready(self):
         # Prevent running this twice or running when not fully ready if not needed
@@ -15,11 +16,18 @@ class PredictorConfig(AppConfig):
         model_dir = os.path.join(settings.BASE_DIR, 'predictor', 'ml_model')
         model_path = os.path.join(model_dir, 'model.pkl')
         symptoms_list_path = os.path.join(model_dir, 'symptoms_list.pkl')
+        importances_path = os.path.join(model_dir, 'feature_importances.pkl')
         
         try:
             if os.path.exists(model_path) and os.path.exists(symptoms_list_path):
                 PredictorConfig.ml_model = joblib.load(model_path)
                 PredictorConfig.all_symptoms = joblib.load(symptoms_list_path)
+                
+                if os.path.exists(importances_path):
+                    PredictorConfig.feature_importances = joblib.load(importances_path)
+                else:
+                    print("Warning: Feature importances not found.")
+                    
                 print("ML Model loaded successfully.")
             else:
                 print("Warning: ML model files not found. Predictor app started without loaded models.")

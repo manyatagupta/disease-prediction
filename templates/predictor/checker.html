@@ -139,6 +139,16 @@
                         <p class="text-amber-800 dark:text-amber-200/80 text-sm">Low confidence score. Your symptoms are generalized and may not strongly match a specific condition.</p>
                     </div>
 
+                    <!-- Key Symptoms (Feature Importance) -->
+                    <div id="keySymptomsContainer" class="hidden mb-6">
+                        <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-key text-emerald-500"></i> Key Contributing Symptoms
+                        </h4>
+                        <div id="keySymptomsList" class="flex flex-wrap gap-2">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
                     <div class="space-y-6">
                         <div>
                             <h4 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 transition-colors">
@@ -318,6 +328,25 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.getElementById('resWarning').classList.remove('hidden');
                 } else {
                     document.getElementById('resWarning').classList.add('hidden');
+                }
+                
+                // Key Symptoms
+                const keyContainer = document.getElementById('keySymptomsContainer');
+                const keyList = document.getElementById('keySymptomsList');
+                if (data.key_symptoms && data.key_symptoms.length > 0) {
+                    keyList.innerHTML = '';
+                    data.key_symptoms.forEach(sym => {
+                        const importancePct = (sym.importance * 100).toFixed(1);
+                        keyList.innerHTML += `
+                            <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-sm flex items-center gap-2 shadow-sm">
+                                <span class="font-semibold">${sym.name}</span>
+                                <span class="text-xs opacity-75">(${importancePct}%)</span>
+                            </div>
+                        `;
+                    });
+                    keyContainer.classList.remove('hidden');
+                } else {
+                    keyContainer.classList.add('hidden');
                 }
                 
                 // Secondary Predictions
