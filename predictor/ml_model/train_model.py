@@ -93,7 +93,9 @@ def train_and_save_model():
     
     print("Training final Calibrated model using 'isotonic' method (best for large datasets)...")
     # 'isotonic' calibration often works better than 'sigmoid' for large datasets
-    clf = CalibratedClassifierCV(estimator=best_rf, method='isotonic', cv=3, n_jobs=1)
+    # We use cv='prefit' because some rare diseases might have fewer than 3 samples in our 100k subset,
+    # which would cause StratifiedKFold to fail during cv=3.
+    clf = CalibratedClassifierCV(estimator=best_rf, method='isotonic', cv='prefit', n_jobs=1)
     clf.fit(X, y)
     
     end_time = time.time()
