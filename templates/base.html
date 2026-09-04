@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MediPredict AI{% endblock %}</title>
     <script>
-        // Check local storage for theme or use system preference to prevent FOUC
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
+        // Check local storage for theme, default to dark mode if not set
+        if (localStorage.getItem('theme') === 'light') {
             document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
         }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -338,10 +338,10 @@
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
         // Change the icons inside the button based on previous settings
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            themeToggleLightIcon.classList.remove('hidden');
-        } else {
+        if (localStorage.getItem('theme') === 'light') {
             themeToggleDarkIcon.classList.remove('hidden');
+        } else {
+            themeToggleLightIcon.classList.remove('hidden');
         }
 
         if (themeToggleBtn) {
