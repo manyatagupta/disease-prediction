@@ -67,7 +67,7 @@
                         <button type="button" id="clearBtn" class="text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors text-sm font-medium px-4 py-2">
                             Reset Console
                         </button>
-                        <button type="submit" id="submitBtn" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] transform hover:-translate-y-1 flex items-center gap-2 group relative overflow-hidden">
+                        <button type="submit" id="submitBtn" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] transform hover:-translate-y-1.5 hover:scale-105 active:scale-95 flex items-center gap-2 group relative overflow-hidden">
                             <span class="relative z-10">Initialize Scan</span>
                             <i class="fa-solid fa-satellite-dish group-hover:animate-pulse relative z-10"></i>
                             <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
@@ -170,7 +170,7 @@
                                     <i class="fa-solid fa-user-doctor text-purple-500"></i> Specialist
                                 </h4>
                                 <p id="resSpecialist" class="text-slate-900 dark:text-white text-sm leading-relaxed font-medium transition-colors"></p>
-                                <button class="mt-4 w-full py-2 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-300 dark:border-transparent rounded-lg text-sm text-slate-700 dark:text-white font-medium transition-colors flex items-center justify-center gap-2">
+                                <button class="mt-4 w-full py-2 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-300 dark:border-transparent rounded-lg text-sm text-slate-700 dark:text-white font-medium transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-location-dot"></i> Find Nearby
                                 </button>
                             </div>
@@ -197,15 +197,15 @@
 
                         <!-- Actions (PDF, Diet, AI) -->
                         <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <button id="downloadPdfBtn" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2 transition-colors text-slate-700 dark:text-white font-bold shadow-sm hover:shadow-md group">
+                            <button id="downloadPdfBtn" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 active:scale-95 text-slate-700 dark:text-white font-bold shadow-sm hover:shadow-lg group">
                                 <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
                                 <span class="text-sm">Download Report</span>
                             </button>
-                            <button id="getDietPlanBtn" class="w-full p-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
+                            <button id="getDietPlanBtn" class="w-full p-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-apple-whole text-2xl group-hover:animate-bounce"></i>
                                 <span class="text-sm">Get Diet Plan</span>
                             </button>
-                            <button id="askAiDoctorBtn" class="w-full p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-[0_0_15px_rgba(79,70,229,0.4)] transition-all flex flex-col items-center justify-center gap-2 group">
+                            <button id="askAiDoctorBtn" class="w-full p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-[0_0_15px_rgba(79,70,229,0.4)] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(79,70,229,0.6)] hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-robot text-2xl group-hover:animate-pulse"></i>
                                 <span class="text-sm">Discuss with AI</span>
                             </button>
