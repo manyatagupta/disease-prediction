@@ -21,6 +21,7 @@ class PredictionHistory(models.Model):
     symptoms_selected = models.TextField() # Comma-separated list or JSON string of symptoms
     predicted_disease = models.CharField(max_length=100)
     confidence = models.FloatField()
+    is_helpful = models.BooleanField(null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

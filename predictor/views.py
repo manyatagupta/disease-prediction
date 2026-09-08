@@ -9,6 +9,7 @@ from django.conf import settings
 from .apps import PredictorConfig
 from django.core.paginator import Paginator
 from django.db.models import Count, Avg
+from django.http import JsonResponse
 
 def home_view(request):
     return render(request, 'predictor/home.html')
@@ -85,13 +86,15 @@ def checker_view(request):
         
         disease_obj = results['disease_obj']
         
+        prediction_id = None
         if request.user.is_authenticated:
-            PredictionHistory.objects.create(
+            history_obj = PredictionHistory.objects.create(
                 user=request.user,
                 predicted_disease=results['predicted_disease'],
                 confidence=results['confidence_score'],
                 symptoms_selected=", ".join(selected_symptoms)
             )
+            prediction_id = history_obj.id
             
         context = {
             'predicted_disease': results['predicted_disease'],
@@ -102,7 +105,8 @@ def checker_view(request):
             'chart_data': results['chart_data'],
             'selected_symptoms': selected_symptoms,
             'top_3': results['top_3'],
-            'key_symptoms': results['key_symptoms']
+            'key_symptoms': results['key_symptoms'],
+            'prediction_id': prediction_id
         }
         
         # Check if request is AJAX
@@ -127,3 +131,22 @@ def checker_view(request):
         return render(request, 'predictor/results.html', context)
         
     return render(request, 'predictor/checker.html', {'symptoms': symptoms})
+
+@login_required
+def submit_feedback(request):
+    if request.method == 'POST':
+        import json as json_lib
+        try:
+            data = json_lib.loads(request.body)
+            prediction_id = data.get('prediction_id')
+            is_helpful = data.get('is_helpful')
+            
+            if prediction_id and is_helpful is not None:
+                history = PredictionHistory.objects.filter(id=prediction_id, user=request.user).first()
+                if history:
+                    history.is_helpful = is_helpful
+                    history.save()
+                    return JsonResponse({'success': True})
+        except Exception:
+            pass
+    return JsonResponse({'success': False}, status=400)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('history/clear/', views.clear_history, name='clear_history'),
     path('ai/chat/', ai_views.chat_with_grok, name='chat_with_grok'),
     path('ai/analyze/', ai_views.analyze_report, name='analyze_report'),
+    path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
 ]
