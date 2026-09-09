@@ -238,3 +238,60 @@ html.dark .glass-panel:hover {
 .glow-border:hover::after {
     opacity: 1;
 }
+
+/* Ultra-Modern 3D Glass */
+.glass-3d {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-top: 2px solid rgba(255, 255, 255, 0.9);
+    border-left: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 
+        0 20px 40px -10px rgba(0, 0, 0, 0.1),
+        0 10px 15px -5px rgba(0, 0, 0, 0.05),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.05),
+        inset 0 2px 20px rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+html.dark .glass-3d {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 20px 40px -10px rgba(0, 0, 0, 0.5),
+        0 10px 15px -5px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 10px rgba(255, 255, 255, 0.02),
+        inset 0 2px 20px rgba(255, 255, 255, 0.05);
+}
+.glass-3d:hover {
+    transform: translateY(-8px) scale(1.02) rotateX(2deg) rotateY(1deg);
+    box-shadow: 
+        0 30px 60px -12px rgba(0, 0, 0, 0.15),
+        0 18px 36px -18px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.05),
+        inset 0 2px 20px rgba(255, 255, 255, 1);
+    border-top: 2px solid rgba(255, 255, 255, 1);
+    border-left: 2px solid rgba(255, 255, 255, 1);
+}
+html.dark .glass-3d:hover {
+    box-shadow: 
+        0 30px 60px -12px rgba(0, 0, 0, 0.6),
+        0 18px 36px -18px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(99, 102, 241, 0.3),
+        inset 0 -2px 10px rgba(255, 255, 255, 0.02),
+        inset 0 2px 20px rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Subtle inner glow for active/highlighted items */
+.inner-glow {
+    box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.2);
+}
+html.dark .inner-glow {
+    box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.15);
+}
