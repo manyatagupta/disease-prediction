@@ -29,12 +29,23 @@
                     {% csrf_token %}
                     
                     <!-- Search Input -->
-                    <div class="relative mb-6 group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 transition-colors">
+                    <div class="relative mb-4 group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 transition-colors z-10">
                             <i class="fa-solid fa-magnifying-glass text-blue-500/70 group-focus-within:text-blue-500 transition-colors"></i>
                         </div>
                         <input type="text" id="symptomSearch" placeholder="Search symptoms (e.g., headache, fever)..." 
-                               class="w-full pl-12 pr-4 py-3.5 bg-white/60 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-sm">
+                               class="glass-input w-full pl-12 pr-4 py-3.5 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400/70 dark:placeholder-slate-500 relative z-0">
+                    </div>
+                    
+                    <!-- Progress Bar for Accuracy -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-1.5 text-slate-500 dark:text-slate-400">
+                            <span id="symptomCountText">0 Selected</span>
+                            <span id="accuracyText">Low Accuracy</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
+                            <div id="accuracyBar" class="h-full bg-red-500 w-0 transition-all duration-500"></div>
+                        </div>
                     </div>
                     
                     <!-- Selected Symptoms Badges -->
@@ -255,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (cb.checked) {
                 count++;
                 const badge = document.createElement('div');
-                badge.className = 'px-3 py-1.5 bg-white/40 dark:bg-slate-800/60 backdrop-blur-md text-slate-800 dark:text-white rounded-xl text-sm font-semibold flex items-center gap-2 animate-fade-in-down shadow-sm border border-slate-200 dark:border-slate-700/50 hover:bg-white/60 dark:hover:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-all group';
+                badge.className = 'px-3 py-1.5 bg-white/40 dark:bg-slate-800/60 backdrop-blur-md text-slate-800 dark:text-white rounded-xl text-sm font-semibold flex items-center gap-2 animate-fade-in-down shadow-sm border border-slate-200 dark:border-slate-700/50 hover:bg-white/60 dark:hover:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-all group glow-border';
                 badge.innerHTML = `
                     <span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]"></span>
                     ${cb.value}
@@ -266,6 +277,35 @@ document.addEventListener("DOMContentLoaded", function() {
                 selectedContainer.appendChild(badge);
             }
         });
+        
+        // Update Progress Bar
+        const accBar = document.getElementById('accuracyBar');
+        const countTxt = document.getElementById('symptomCountText');
+        const accTxt = document.getElementById('accuracyText');
+        
+        countTxt.textContent = `${count} Selected`;
+        
+        if (count === 0) {
+            accBar.style.width = '0%';
+            accBar.className = 'h-full bg-slate-300 dark:bg-slate-600 transition-all duration-500';
+            accTxt.textContent = 'Awaiting Input';
+            accTxt.className = 'text-slate-400';
+        } else if (count < 3) {
+            accBar.style.width = '33%';
+            accBar.className = 'h-full bg-red-500 transition-all duration-500';
+            accTxt.textContent = 'Low Accuracy';
+            accTxt.className = 'text-red-500';
+        } else if (count < 5) {
+            accBar.style.width = '66%';
+            accBar.className = 'h-full bg-amber-500 transition-all duration-500';
+            accTxt.textContent = 'Moderate Accuracy';
+            accTxt.className = 'text-amber-500';
+        } else {
+            accBar.style.width = '100%';
+            accBar.className = 'h-full bg-emerald-500 transition-all duration-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]';
+            accTxt.textContent = 'High Accuracy';
+            accTxt.className = 'text-emerald-500';
+        }
         
         // Add event listeners to remove buttons
         document.querySelectorAll('.remove-badge').forEach(btn => {
