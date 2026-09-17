@@ -33,7 +33,7 @@
                 <p class="text-slate-500 dark:text-slate-400 text-lg">Join to get personalized AI predictions.</p>
             </div>
             
-            <form method="POST" class="space-y-5 bg-white/70 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200 dark:border-slate-700/50 shadow-xl backdrop-blur-xl transition-all">
+            <form method="POST" class="space-y-5 glass-3d p-8 rounded-3xl transition-all">
             {% csrf_token %}
             
             {% if form.non_field_errors %}
@@ -50,12 +50,12 @@
             <div class="space-y-4">
             {% for field in form %}
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" for="{{ field.id_for_label }}">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]" for="{{ field.id_for_label }}">
                         {{ field.label }}
                     </label>
                     <div class="relative group">
                         <!-- Icon based on field type/name -->
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors z-10">
                             {% if 'password' in field.name.lower %}
                                 <i class="fa-solid fa-lock text-sm"></i>
                             {% elif 'username' in field.name.lower %}
@@ -66,7 +66,7 @@
                                 <i class="fa-solid fa-pen text-sm"></i>
                             {% endif %}
                         </div>
-                        <input type="{{ field.widget_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="w-full bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400 dark:placeholder-slate-500" placeholder="Enter your {{ field.label|lower }}" required>
+                        <input type="{{ field.widget_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="glass-input w-full text-slate-900 dark:text-white rounded-xl py-3 pl-10 pr-4 placeholder-slate-400/70 dark:placeholder-slate-500 relative z-0" placeholder="Enter your {{ field.label|lower }}" required>
                     </div>
                     {% if field.errors %}
                         <p class="mt-1 text-xs text-red-500 dark:text-red-400 flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> {{ field.errors.0 }}</p>
