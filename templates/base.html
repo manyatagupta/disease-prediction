@@ -23,27 +23,54 @@
             theme: {
                 extend: {
                     colors: {
-                        blue: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b' },
-                        emerald: { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', 950: '#042f2e' },
-                        slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        // Premium dark mode palette (deep space / zinc)
+                        premium: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617', // Deepest background
+                        },
+                        // Vibrant Accents
+                        accent: {
+                            teal: '#14b8a6', // Secondary
+                            cyan: '#06b6d4',
+                            indigo: '#6366f1', // Primary
+                            purple: '#a855f7',
+                            pink: '#ec4899',
+                            rose: '#f43f5e',
+                            amber: '#f59e0b'
+                        },
                         dark: '#020617',
-                        darker: '#01030A',
+                        darker: '#01030a',
                         card: 'rgba(15, 23, 42, 0.65)',
-                        primary: '#6366f1',
-                        secondary: '#14b8a6',
-                        accent: '#c084fc',
                     },
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Outfit', 'Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'premium': '0 10px 40px -10px rgba(0, 0, 0, 0.5)',
+                        'premium-hover': '0 20px 50px -10px rgba(0, 0, 0, 0.6), 0 0 25px 0 rgba(99, 102, 241, 0.2)',
+                        'glow': '0 0 20px rgba(99, 102, 241, 0.3)',
+                        'glow-accent': '0 0 25px rgba(20, 184, 166, 0.4)',
                     },
                     animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'float-slow': 'float 8s ease-in-out infinite',
+                        'float-slow': 'float 10s ease-in-out infinite',
                         'float-fast': 'float 4s ease-in-out infinite',
-                        'fade-in-down': 'fadeInDown 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
-                        'shine': 'shine 2s infinite',
+                        'fade-in-down': 'fadeInDown 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
+                        'shine': 'shine 2.5s infinite',
                         'glow': 'glow 3s ease-in-out infinite alternate',
+                        'mesh': 'mesh 15s ease infinite alternate',
                     },
                     keyframes: {
                         float: {
@@ -54,13 +81,21 @@
                             '0%': { opacity: '0', transform: 'translateY(-20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
                         shine: {
                             '0%': { transform: 'translateX(-100%)' },
                             '100%': { transform: 'translateX(100%)' }
                         },
                         glow: {
                             '0%': { boxShadow: '0 0 10px rgba(99, 102, 241, 0.2)' },
-                            '100%': { boxShadow: '0 0 25px rgba(99, 102, 241, 0.6)' }
+                            '100%': { boxShadow: '0 0 30px rgba(99, 102, 241, 0.7)' }
+                        },
+                        mesh: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '100%': { backgroundPosition: '100% 50%' }
                         }
                     }
                 }
@@ -77,29 +112,31 @@
     <!-- Vanilla Tilt -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 </head>
-<body class="bg-slate-50 dark:bg-darker text-slate-900 dark:text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500/30 transition-colors duration-300 relative">
+<body class="bg-premium-50 dark:bg-premium-950 text-premium-900 dark:text-premium-100 font-sans antialiased min-h-screen flex flex-col selection:bg-accent-indigo/30 transition-colors duration-500 relative">
     
-    <!-- Noise Texture Overlay -->
+    <!-- Cinematic Noise Overlay for Texture -->
     <div class="bg-noise"></div>
     
-    <!-- Cinematic Background Gradients & Orbs -->
-    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-slate-900 hidden dark:block transition-all">
-        <div class="absolute inset-0 bg-grid opacity-20 z-0"></div>
-        <!-- Main Aurora -->
-        <div class="absolute -top-[30%] -left-[20%] w-[70vw] h-[70vw] rounded-full bg-cyan-600/20 blur-[150px] animate-[float_10s_ease-in-out_infinite] mix-blend-screen"></div>
-        <div class="absolute top-[30%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-purple-700/20 blur-[150px] animate-[float_14s_ease-in-out_infinite_reverse] mix-blend-screen"></div>
-        <div class="absolute -bottom-[20%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-emerald-600/15 blur-[120px] animate-[float_12s_ease-in-out_infinite] mix-blend-screen"></div>
+    <!-- Premium Dark Mode Mesh Background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-premium-950 hidden dark:block transition-all">
+        <!-- Abstract Structural Grid -->
+        <div class="absolute inset-0 bg-grid opacity-10 z-0"></div>
         
-        <!-- Glowing Orbs -->
-        <div class="absolute top-[15%] right-[25%] w-6 h-6 rounded-full bg-cyan-400 shadow-[0_0_30px_10px_rgba(34,211,238,0.5)] animate-pulse"></div>
-        <div class="absolute bottom-[25%] left-[15%] w-8 h-8 rounded-full bg-purple-500 shadow-[0_0_40px_12px_rgba(168,85,247,0.5)] animate-[pulse_4s_ease-in-out_infinite]"></div>
+        <!-- Elegant Ambient Orbs -->
+        <div class="absolute -top-[25%] -left-[15%] w-[80vw] h-[80vw] rounded-full bg-accent-indigo/10 blur-[180px] animate-[float_15s_ease-in-out_infinite] mix-blend-screen pointer-events-none"></div>
+        <div class="absolute top-[20%] -right-[15%] w-[60vw] h-[60vw] rounded-full bg-accent-teal/10 blur-[150px] animate-[float_20s_ease-in-out_infinite_reverse] mix-blend-screen pointer-events-none"></div>
+        <div class="absolute -bottom-[15%] left-[25%] w-[70vw] h-[70vw] rounded-full bg-accent-purple/10 blur-[160px] animate-[float_18s_ease-in-out_infinite] mix-blend-screen pointer-events-none"></div>
+        
+        <!-- Micro-glow particles -->
+        <div class="absolute top-[20%] right-[30%] w-4 h-4 rounded-full bg-accent-cyan shadow-[0_0_40px_15px_rgba(6,182,212,0.6)] animate-pulse"></div>
+        <div class="absolute bottom-[35%] left-[20%] w-6 h-6 rounded-full bg-accent-purple shadow-[0_0_50px_20px_rgba(168,85,247,0.6)] animate-[pulse_5s_ease-in-out_infinite]"></div>
     </div>
     
-    <!-- Light Mode Background -->
-    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-mesh-light dark:hidden transition-all">
-        <div class="absolute inset-0 bg-grid opacity-20 z-0"></div>
-        <div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/10 blur-[120px] animate-[float_10s_ease-in-out_infinite]"></div>
-        <div class="absolute top-[40%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-purple-500/10 blur-[120px] animate-[float_12s_ease-in-out_infinite_reverse]"></div>
+    <!-- Premium Light Mode Mesh Background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-premium-50 dark:hidden transition-all">
+        <div class="absolute inset-0 bg-grid opacity-[0.03] z-0"></div>
+        <div class="absolute -top-[15%] -left-[5%] w-[60vw] h-[60vw] rounded-full bg-blue-400/10 blur-[140px] animate-[float_12s_ease-in-out_infinite] pointer-events-none"></div>
+        <div class="absolute top-[35%] -right-[5%] w-[50vw] h-[50vw] rounded-full bg-purple-400/10 blur-[140px] animate-[float_14s_ease-in-out_infinite_reverse] pointer-events-none"></div>
     </div>
 
     {% if user.is_authenticated %}
@@ -110,92 +147,93 @@
         <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden md:hidden opacity-0 transition-opacity duration-300"></div>
         
         <!-- Sidebar -->
-        <aside id="dashboard-sidebar" class="w-64 flex-shrink-0 glass-panel md:m-4 md:rounded-3xl border border-white/40 dark:border-slate-700/50 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out shadow-xl dark:shadow-2xl">
-            <div class="p-6 border-b border-slate-200/50 dark:border-slate-800/50 transition-colors flex justify-between items-center relative overflow-hidden">
-                <div class="absolute -top-10 -left-10 w-32 h-32 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-emerald-500 dark:from-blue-400 dark:to-emerald-400 relative z-10">
-                    <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-400 drop-shadow-md"></i> MediPredict
+        <aside id="dashboard-sidebar" class="w-64 flex-shrink-0 glass-panel md:m-5 md:rounded-[2rem] border border-white/40 dark:border-white/5 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 transition-all duration-500 ease-in-out shadow-premium dark:shadow-premium group">
+            <div class="p-6 border-b border-premium-200/50 dark:border-premium-800/30 transition-colors flex justify-between items-center relative overflow-hidden">
+                <div class="absolute -top-10 -left-10 w-32 h-32 bg-accent-indigo/10 dark:bg-accent-indigo/20 rounded-full blur-2xl pointer-events-none transition-all group-hover:scale-110"></div>
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-accent-indigo to-accent-teal dark:from-blue-400 dark:to-accent-teal relative z-10 tracking-tight">
+                    <i class="fa-solid fa-notes-medical text-accent-indigo dark:text-blue-400 drop-shadow-md"></i> MediPredict
                 </a>
-                <button id="close-sidebar-btn" aria-label="Close menu" class="md:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-2 relative z-10">
+                <button id="close-sidebar-btn" aria-label="Close menu" class="md:hidden text-premium-500 dark:text-premium-400 hover:text-premium-900 dark:hover:text-white p-2 relative z-10 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
             
-            <div class="flex-1 overflow-y-auto py-4 px-3 space-y-2 custom-scrollbar relative z-10">
-                <div class="pt-2 pb-1 px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Main</div>
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'home' %}bg-blue-100/60 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 font-bold inner-glow shadow-[0_4px_10px_rgba(59,130,246,0.1)]{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-blue-600 dark:hover:text-white hover:translate-x-1{% endif %} transition-all duration-300 group">
-                    <i class="fa-solid fa-border-all w-5 text-center {% if request.resolver_match.url_name == 'home' %}text-blue-600 dark:text-blue-400 drop-shadow-md{% else %}text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400{% endif %} transition-all"></i> Dashboard
+            <div class="flex-1 overflow-y-auto py-6 px-4 space-y-2.5 custom-scrollbar relative z-10">
+                <div class="pt-2 pb-1 px-4 text-[11px] font-black text-premium-400 dark:text-premium-500 uppercase tracking-widest">Main Menu</div>
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl {% if request.resolver_match.url_name == 'home' %}bg-accent-indigo/10 dark:bg-accent-indigo/20 text-accent-indigo dark:text-blue-300 font-bold inner-glow shadow-sm border border-accent-indigo/10 dark:border-accent-indigo/20{% else %}text-premium-600 dark:text-premium-300 hover:bg-premium-100/80 dark:hover:bg-premium-800/50 hover:text-accent-indigo dark:hover:text-white hover:translate-x-1.5 border border-transparent{% endif %} transition-all duration-300 group">
+                    <i class="fa-solid fa-border-all w-5 text-center {% if request.resolver_match.url_name == 'home' %}text-accent-indigo dark:text-blue-400 drop-shadow-md{% else %}text-premium-400 group-hover:text-accent-indigo dark:group-hover:text-blue-400{% endif %} transition-all group-hover:scale-110"></i> Dashboard
                 </a>
-                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'checker' %}bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold inner-glow shadow-[0_4px_10px_rgba(16,185,129,0.1)]{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-emerald-600 dark:hover:text-white hover:translate-x-1{% endif %} transition-all duration-300 group">
-                    <i class="fa-solid fa-stethoscope w-5 text-center {% if request.resolver_match.url_name == 'checker' %}text-emerald-600 dark:text-emerald-400 drop-shadow-md{% else %}text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-400{% endif %} transition-all"></i> Predict Disease
+                <a href="{% url 'predictor:checker' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl {% if request.resolver_match.url_name == 'checker' %}bg-accent-teal/10 dark:bg-accent-teal/20 text-accent-teal dark:text-emerald-300 font-bold inner-glow shadow-sm border border-accent-teal/10 dark:border-accent-teal/20{% else %}text-premium-600 dark:text-premium-300 hover:bg-premium-100/80 dark:hover:bg-premium-800/50 hover:text-accent-teal dark:hover:text-white hover:translate-x-1.5 border border-transparent{% endif %} transition-all duration-300 group">
+                    <i class="fa-solid fa-stethoscope w-5 text-center {% if request.resolver_match.url_name == 'checker' %}text-accent-teal dark:text-emerald-400 drop-shadow-md{% else %}text-premium-400 group-hover:text-accent-teal dark:group-hover:text-emerald-400{% endif %} transition-all group-hover:scale-110"></i> Predict Disease
                 </a>
-                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'history' %}bg-purple-100/60 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold inner-glow shadow-[0_4px_10px_rgba(168,85,247,0.1)]{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-purple-600 dark:hover:text-white hover:translate-x-1{% endif %} transition-all duration-300 group">
-                    <i class="fa-solid fa-clock-rotate-left w-5 text-center {% if request.resolver_match.url_name == 'history' %}text-purple-600 dark:text-purple-400 drop-shadow-md{% else %}text-slate-400 group-hover:text-purple-500 dark:group-hover:text-purple-400{% endif %} transition-all"></i> History
-                </a>
-                
-                <div class="pt-6 pb-1 px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">AI Tools</div>
-                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-blue-50/80 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 group">
-                    <i class="fa-solid fa-robot w-5 text-center text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"></i> AI Doctor
-                </a>
-                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl {% if request.resolver_match.url_name == 'analyze_report' %}bg-pink-100/60 dark:bg-pink-500/20 text-pink-700 dark:text-pink-300 font-bold inner-glow shadow-[0_4px_10px_rgba(236,72,153,0.1)]{% else %}text-slate-600 dark:text-slate-300 hover:bg-pink-50/80 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 hover:translate-x-1{% endif %} transition-all duration-300 group">
-                    <i class="fa-solid fa-file-waveform w-5 text-center {% if request.resolver_match.url_name == 'analyze_report' %}text-pink-600 dark:text-pink-400 drop-shadow-md{% else %}text-slate-400 group-hover:text-pink-500 dark:group-hover:text-pink-400{% endif %} transition-all"></i> Report Analyzer
+                <a href="{% url 'predictor:history' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl {% if request.resolver_match.url_name == 'history' %}bg-accent-purple/10 dark:bg-accent-purple/20 text-accent-purple dark:text-purple-300 font-bold inner-glow shadow-sm border border-accent-purple/10 dark:border-accent-purple/20{% else %}text-premium-600 dark:text-premium-300 hover:bg-premium-100/80 dark:hover:bg-premium-800/50 hover:text-accent-purple dark:hover:text-white hover:translate-x-1.5 border border-transparent{% endif %} transition-all duration-300 group">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center {% if request.resolver_match.url_name == 'history' %}text-accent-purple dark:text-purple-400 drop-shadow-md{% else %}text-premium-400 group-hover:text-accent-purple dark:group-hover:text-purple-400{% endif %} transition-all group-hover:scale-110"></i> History
                 </a>
                 
-                <div class="pt-6 pb-1 px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Health</div>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-amber-50/80 dark:hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 hover:translate-x-1 transition-all duration-300 group">
-                    <i class="fa-solid fa-chart-line w-5 text-center text-slate-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors"></i> Analytics
+                <div class="pt-8 pb-1 px-4 text-[11px] font-black text-premium-400 dark:text-premium-500 uppercase tracking-widest">Intelligence</div>
+                <a href="#" onclick="window.openAIChat(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-premium-600 dark:text-premium-300 hover:bg-blue-50/80 dark:hover:bg-accent-indigo/10 hover:text-accent-indigo dark:hover:text-blue-400 hover:translate-x-1.5 border border-transparent transition-all duration-300 group">
+                    <i class="fa-solid fa-robot w-5 text-center text-premium-400 group-hover:text-accent-indigo dark:group-hover:text-blue-400 transition-colors group-hover:scale-110"></i> AI Doctor
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-50/80 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 hover:translate-x-1 transition-all duration-300 group">
-                    <i class="fa-solid fa-hospital w-5 text-center text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors"></i> Hospitals
+                <a href="{% url 'predictor:analyze_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl {% if request.resolver_match.url_name == 'analyze_report' %}bg-accent-pink/10 dark:bg-accent-pink/20 text-accent-pink dark:text-pink-300 font-bold inner-glow shadow-sm border border-accent-pink/10 dark:border-accent-pink/20{% else %}text-premium-600 dark:text-premium-300 hover:bg-pink-50/80 dark:hover:bg-accent-pink/10 hover:text-accent-pink dark:hover:text-pink-400 hover:translate-x-1.5 border border-transparent{% endif %} transition-all duration-300 group">
+                    <i class="fa-solid fa-file-waveform w-5 text-center {% if request.resolver_match.url_name == 'analyze_report' %}text-accent-pink dark:text-pink-400 drop-shadow-md{% else %}text-premium-400 group-hover:text-accent-pink dark:group-hover:text-pink-400{% endif %} transition-all group-hover:scale-110"></i> Report Analyzer
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 hover:translate-x-1 transition-all duration-300 group">
-                    <i class="fa-solid fa-gear w-5 text-center text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors"></i> Settings
+                
+                <div class="pt-8 pb-1 px-4 text-[11px] font-black text-premium-400 dark:text-premium-500 uppercase tracking-widest">Wellness</div>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-premium-600 dark:text-premium-300 hover:bg-amber-50/80 dark:hover:bg-accent-amber/10 hover:text-accent-amber dark:hover:text-amber-400 hover:translate-x-1.5 border border-transparent transition-all duration-300 group">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-premium-400 group-hover:text-accent-amber dark:group-hover:text-amber-400 transition-colors group-hover:scale-110"></i> Analytics
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-premium-600 dark:text-premium-300 hover:bg-red-50/80 dark:hover:bg-accent-rose/10 hover:text-accent-rose dark:hover:text-rose-400 hover:translate-x-1.5 border border-transparent transition-all duration-300 group">
+                    <i class="fa-solid fa-hospital w-5 text-center text-premium-400 group-hover:text-accent-rose dark:group-hover:text-rose-400 transition-colors group-hover:scale-110"></i> Hospitals
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-premium-600 dark:text-premium-300 hover:bg-premium-100/80 dark:hover:bg-premium-800/40 hover:text-premium-900 dark:hover:text-premium-200 hover:translate-x-1.5 border border-transparent transition-all duration-300 group">
+                    <i class="fa-solid fa-gear w-5 text-center text-premium-400 group-hover:text-premium-700 dark:group-hover:text-premium-200 transition-colors group-hover:scale-110"></i> Settings
                 </a>
             </div>
             
-            <div class="p-4 border-t border-slate-200/50 dark:border-slate-800/50 transition-colors relative z-10">
-                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300">
-                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i> Logout
+            <div class="p-6 border-t border-premium-200/50 dark:border-premium-800/30 transition-colors relative z-10">
+                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-premium-500 dark:text-premium-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 font-bold transition-all duration-300 border border-transparent hover:border-red-500/20 group">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center group-hover:-translate-x-1 transition-transform"></i> Logout
                 </a>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col overflow-hidden relative">
+        <div class="flex-1 flex flex-col overflow-hidden relative md:py-5 md:pr-5">
             <!-- Top Navbar -->
-            <header class="h-16 glass-panel rounded-2xl md:mt-4 md:mr-4 px-4 sm:px-6 z-10 flex items-center justify-between shadow-lg shadow-blue-500/5 transition-all border border-white/40 dark:border-slate-700/50 mb-2">
-                <button id="mobile-menu-btn" aria-label="Open menu" class="md:hidden text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 p-2 transition-colors">
+            <header class="h-20 glass-panel rounded-[2rem] px-6 z-10 flex items-center justify-between shadow-sm transition-all border border-white/40 dark:border-white/5 mb-4 group relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <button id="mobile-menu-btn" aria-label="Open menu" class="md:hidden text-premium-500 dark:text-premium-400 hover:text-accent-indigo dark:hover:text-blue-400 p-2 transition-colors">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
                 
                 <!-- Search -->
-                <div class="hidden md:flex items-center bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-md rounded-full px-5 py-2 border border-slate-200/60 dark:border-slate-700/50 focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:bg-white dark:focus-within:bg-slate-900 transition-all w-96 max-w-md shadow-inner">
-                    <i class="fa-solid fa-search text-slate-400 dark:text-slate-500 mr-3"></i>
-                    <input type="text" placeholder="Search diseases, symptoms, or reports..." class="bg-transparent border-none outline-none text-sm text-slate-700 dark:text-slate-200 w-full placeholder-slate-400/80 dark:placeholder-slate-500 focus:ring-0">
+                <div class="hidden md:flex items-center bg-premium-100/50 dark:bg-premium-900/40 backdrop-blur-md rounded-full px-5 py-2.5 border border-premium-200/60 dark:border-premium-700/30 focus-within:border-accent-indigo/50 focus-within:ring-2 focus-within:ring-accent-indigo/20 focus-within:bg-white dark:focus-within:bg-premium-900/80 transition-all w-96 max-w-xl shadow-inner group/search">
+                    <i class="fa-solid fa-search text-premium-400 dark:text-premium-500 mr-3 group-focus-within/search:text-accent-indigo transition-colors"></i>
+                    <input type="text" placeholder="Search insights, diseases, or reports..." class="bg-transparent border-none outline-none text-sm text-premium-800 dark:text-premium-100 w-full placeholder-premium-400/80 dark:placeholder-premium-500 focus:ring-0 font-medium">
                 </div>
                 <div class="md:hidden"></div>
                 
                 <!-- Right Actions -->
-                <div class="flex items-center gap-3 sm:gap-5">
-                    <button class="w-10 h-10 rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-md flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all shadow-sm relative hover:-translate-y-0.5">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="absolute top-2 right-2 w-2 h-2 bg-pink-500 rounded-full shadow-[0_0_8px_#ec4899] animate-pulse"></span>
+                <div class="flex items-center gap-4 sm:gap-6 relative z-10">
+                    <button class="w-11 h-11 rounded-full bg-premium-100/80 dark:bg-premium-800/60 backdrop-blur-md flex items-center justify-center text-premium-500 dark:text-premium-400 hover:text-accent-indigo dark:hover:text-blue-400 hover:bg-white dark:hover:bg-premium-800 transition-all shadow-sm relative hover:-translate-y-1 hover:shadow-md border border-premium-200/50 dark:border-premium-700/30">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-accent-pink rounded-full shadow-[0_0_10px_#ec4899] animate-pulse border-2 border-white dark:border-premium-900"></span>
                     </button>
-                    <button id="theme-toggle" class="w-10 h-10 rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-md flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all shadow-sm hover:-translate-y-0.5">
-                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden"></i>
-                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden"></i>
+                    <button id="theme-toggle" class="w-11 h-11 rounded-full bg-premium-100/80 dark:bg-premium-800/60 backdrop-blur-md flex items-center justify-center text-premium-500 dark:text-premium-400 hover:text-accent-amber dark:hover:text-amber-400 hover:bg-white dark:hover:bg-premium-800 transition-all shadow-sm hover:-translate-y-1 hover:shadow-md border border-premium-200/50 dark:border-premium-700/30">
+                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden text-lg"></i>
+                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden text-lg"></i>
                     </button>
-                    <div class="flex items-center gap-3 pl-2 sm:pl-5 border-l border-slate-200/50 dark:border-slate-700/50 cursor-pointer group transition-all">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-emerald-400 p-[2px] shadow-md group-hover:shadow-blue-500/40 dark:group-hover:shadow-blue-500/30 transition-all group-hover:scale-105">
-                            <div class="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-slate-800 dark:text-white font-bold text-sm">
+                    <div class="flex items-center gap-4 pl-3 sm:pl-6 border-l border-premium-200/80 dark:border-premium-800/50 cursor-pointer group transition-all">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-indigo via-accent-purple to-accent-teal p-[2px] shadow-sm group-hover:shadow-glow group-hover:scale-105 transition-all">
+                            <div class="w-full h-full rounded-full bg-white dark:bg-premium-900 flex items-center justify-center text-premium-900 dark:text-white font-black text-lg">
                                 {{ user.username|make_list|first|upper }}
                             </div>
                         </div>
                         <div class="hidden md:flex flex-col">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-none">{{ user.username }}</span>
-                            <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1">Premium User</span>
+                            <span class="font-black text-sm text-premium-900 dark:text-premium-100 group-hover:text-accent-indigo dark:group-hover:text-blue-400 transition-colors leading-none mb-1">{{ user.username }}</span>
+                            <span class="text-[10px] font-black text-premium-400 dark:text-premium-500 uppercase tracking-widest flex items-center gap-1"><i class="fa-solid fa-crown text-accent-amber text-[8px]"></i> Pro Member</span>
                         </div>
-                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 hidden md:block group-hover:translate-y-0.5 transition-transform"></i>
+                        <i class="fa-solid fa-chevron-down text-xs text-premium-400 dark:text-premium-500 hidden md:block group-hover:translate-y-0.5 transition-transform"></i>
                     </div>
                 </div>
             </header>
@@ -236,91 +274,100 @@
     </div>
     {% else %}
     <!-- LANDING PAGE LAYOUT -->
-    <nav class="fixed w-full z-50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl backdrop-saturate-200 border-b border-white/30 dark:border-white/10 shadow-sm transition-all duration-300" id="landing-nav">
+    <nav class="fixed w-full z-50 bg-white/60 dark:bg-premium-950/60 backdrop-blur-3xl backdrop-saturate-200 border-b border-white/30 dark:border-white/5 shadow-sm transition-all duration-300" id="landing-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400">
-                    <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict <span class="text-slate-800 dark:text-white font-light text-xl">AI</span>
+            <div class="flex justify-between items-center h-24">
+                <a href="{% url 'predictor:home' %}" class="flex items-center gap-3 text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-accent-indigo to-accent-teal dark:from-blue-400 dark:to-accent-teal">
+                    <i class="fa-solid fa-notes-medical text-accent-indigo dark:text-blue-500"></i> MediPredict <span class="text-premium-800 dark:text-white font-light text-2xl">AI</span>
                 </a>
                 
-                <div class="hidden md:flex space-x-8">
-                    <a href="#features" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">Features</a>
-                    <a href="#how-it-works" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">How it Works</a>
-                    <a href="#ai-doctor" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">AI Doctor</a>
+                <div class="hidden md:flex space-x-10">
+                    <a href="#features" class="text-premium-600 dark:text-premium-300 hover:text-accent-indigo dark:hover:text-white transition-colors font-bold tracking-wide">Features</a>
+                    <a href="#how-it-works" class="text-premium-600 dark:text-premium-300 hover:text-accent-indigo dark:hover:text-white transition-colors font-bold tracking-wide">How it Works</a>
+                    <a href="#ai-doctor" class="text-premium-600 dark:text-premium-300 hover:text-accent-indigo dark:hover:text-white transition-colors font-bold tracking-wide">AI Doctor</a>
                 </div>
                 
-                <div class="flex items-center gap-4">
-                    <a href="{% url 'accounts:login' %}" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors hidden sm:block">Log in</a>
-                    <a href="{% url 'accounts:signup' %}" class="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] hover:-translate-y-1 hover:scale-105 active:scale-95">
+                <div class="flex items-center gap-5">
+                    <a href="{% url 'accounts:login' %}" class="text-premium-600 dark:text-premium-300 hover:text-accent-indigo dark:hover:text-white font-bold transition-colors hidden sm:block">Log in</a>
+                    <a href="{% url 'accounts:signup' %}" class="px-7 py-3 rounded-full bg-gradient-to-r from-accent-indigo to-blue-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-1 hover:scale-105 active:scale-95">
                         Get Started
                     </a>
-                    <button id="theme-toggle" class="w-10 h-10 ml-2 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden"></i>
-                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden"></i>
+                    <button id="theme-toggle" class="w-12 h-12 ml-2 rounded-full bg-premium-100 dark:bg-premium-800 flex items-center justify-center text-premium-500 dark:text-premium-400 hover:text-accent-indigo dark:hover:text-white transition-colors border border-transparent dark:border-premium-700/50">
+                        <i id="theme-toggle-dark-icon" class="fa-regular fa-moon hidden text-lg"></i>
+                        <i id="theme-toggle-light-icon" class="fa-regular fa-sun hidden text-lg"></i>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
     
-    <main class="flex-1 pt-20">
+    <main class="flex-1 pt-24">
         {% block content %}{% endblock content %}
     </main>
     
-    <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 py-12 mt-20 backdrop-blur-lg transition-colors">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <a href="{% url 'predictor:home' %}" class="flex items-center justify-center gap-2 text-xl font-bold text-slate-800 dark:text-white mb-6">
-                <i class="fa-solid fa-notes-medical text-blue-600 dark:text-blue-500"></i> MediPredict AI
+    <footer class="border-t border-premium-200/50 dark:border-premium-800/30 bg-premium-50/80 dark:bg-premium-950/80 py-16 mt-24 backdrop-blur-xl transition-colors relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid opacity-5 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+            <a href="{% url 'predictor:home' %}" class="flex items-center justify-center gap-3 text-2xl font-black text-premium-800 dark:text-white mb-6">
+                <i class="fa-solid fa-notes-medical text-accent-indigo dark:text-blue-500"></i> MediPredict AI
             </a>
-            <p class="text-slate-600 dark:text-slate-500 mb-6 max-w-md mx-auto">Empowering global healthcare with advanced Artificial Intelligence. Accurate, fast, and reliable.</p>
-            <p class="text-slate-500 dark:text-slate-600 text-sm">&copy; 2026 MediPredict AI. All rights reserved.</p>
+            <p class="text-premium-600 dark:text-premium-400 mb-8 max-w-lg mx-auto font-medium leading-relaxed">Empowering global healthcare with advanced Artificial Intelligence. Accurate, fast, and remarkably reliable.</p>
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="#" class="w-10 h-10 rounded-full bg-premium-200 dark:bg-premium-800 flex items-center justify-center text-premium-600 dark:text-premium-400 hover:text-white hover:bg-accent-indigo transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-premium-200 dark:bg-premium-800 flex items-center justify-center text-premium-600 dark:text-premium-400 hover:text-white hover:bg-accent-indigo transition-colors"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-premium-200 dark:bg-premium-800 flex items-center justify-center text-premium-600 dark:text-premium-400 hover:text-white hover:bg-accent-indigo transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+            </div>
+            <p class="text-premium-500 dark:text-premium-600 text-sm font-bold tracking-wide uppercase">&copy; 2026 MediPredict AI. All rights reserved.</p>
         </div>
     </footer>
     {% endif %}
 
     <!-- AI DOCTOR CHAT MODAL -->
-    <div id="aiChatModal" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-6rem)] bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-2xl flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300 overflow-hidden">
+    <div id="aiChatModal" class="fixed bottom-6 right-6 w-[400px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-6rem)] bg-white/95 dark:bg-premium-900/95 backdrop-blur-3xl border border-premium-200/50 dark:border-white/10 rounded-3xl shadow-premium flex flex-col z-50 transform translate-y-8 opacity-0 pointer-events-none transition-all duration-500 overflow-hidden">
         <!-- Chat Header -->
-        <div class="flex items-center justify-between p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 transition-colors">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    <i class="fa-solid fa-robot"></i>
+        <div class="flex items-center justify-between p-5 border-b border-premium-200/50 dark:border-white/5 bg-premium-50/50 dark:bg-premium-800/30 transition-colors">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-indigo to-accent-purple p-[2px] shadow-glow">
+                    <div class="w-full h-full rounded-full bg-white dark:bg-premium-900 flex items-center justify-center text-accent-indigo dark:text-blue-400 text-xl">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
                 </div>
                 <div>
-                    <h4 class="text-slate-900 dark:text-white font-bold text-sm">Grok AI Doctor</h4>
-                    <p class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span> Online</p>
+                    <h4 class="text-premium-900 dark:text-white font-black text-base">Grok AI Doctor</h4>
+                    <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span> Online & Ready</p>
                 </div>
             </div>
-            <div class="flex items-center gap-1">
-                <button id="exportAiChatBtn" class="text-slate-400 hover:text-red-500 transition-colors p-2" title="Download Chat as PDF">
-                    <i class="fa-solid fa-file-pdf text-lg"></i>
+            <div class="flex items-center gap-2">
+                <button id="exportAiChatBtn" class="text-premium-400 hover:text-red-500 transition-colors p-2 bg-premium-100 dark:bg-premium-800 rounded-full w-9 h-9 flex items-center justify-center" title="Download Chat as PDF">
+                    <i class="fa-solid fa-file-pdf"></i>
                 </button>
-                <button id="closeAiChat" class="text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors p-2">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button id="closeAiChat" class="text-premium-400 hover:text-premium-900 dark:hover:text-white transition-colors p-2 bg-premium-100 dark:bg-premium-800 rounded-full w-9 h-9 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
         </div>
         
         <!-- Chat Messages -->
-        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-white dark:bg-slate-900/50 transition-colors">
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar bg-white dark:bg-premium-900/50 transition-colors relative">
+            <div class="absolute inset-0 bg-noise opacity-5 pointer-events-none"></div>
             <!-- Initial AI Message -->
-            <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-robot text-xs"></i>
+            <div class="flex items-start gap-4 relative z-10">
+                <div class="w-10 h-10 rounded-full bg-accent-indigo/10 dark:bg-accent-indigo/20 border border-accent-indigo/20 flex items-center justify-center text-accent-indigo dark:text-blue-400 flex-shrink-0 mt-1 shadow-sm">
+                    <i class="fa-solid fa-robot text-sm"></i>
                 </div>
-                <div class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-200 dark:border-slate-700 shadow-sm max-w-[80%] transition-colors">
+                <div class="bg-premium-50 dark:bg-premium-800 text-premium-800 dark:text-premium-200 p-4 rounded-2xl rounded-tl-sm text-sm border border-premium-200/50 dark:border-premium-700/50 shadow-sm max-w-[85%] transition-colors font-medium leading-relaxed">
                     Hello! I'm your Grok AI health assistant. You can ask me about your symptoms, get general precautions, or discuss your diet. How can I help you today?
                 </div>
             </div>
         </div>
         
         <!-- Chat Input -->
-        <div class="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl transition-colors">
-            <form id="aiChatForm" class="flex items-center gap-2">
+        <div class="p-4 border-t border-premium-200/50 dark:border-white/5 bg-premium-50/80 dark:bg-premium-950/80 backdrop-blur-md transition-colors z-10">
+            <form id="aiChatForm" class="flex items-center gap-3 relative">
                 {% csrf_token %}
-                <input type="text" id="aiChatInput" placeholder="Type a medical question..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
-                <button type="submit" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-colors flex-shrink-0 shadow-[0_0_10px_rgba(37,99,235,0.2)]">
-                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                <input type="text" id="aiChatInput" placeholder="Type a medical question..." class="flex-1 bg-white dark:bg-premium-900 border border-premium-300 dark:border-premium-700 rounded-2xl px-5 py-3 text-sm text-premium-900 dark:text-white placeholder-premium-400 dark:placeholder-premium-500 focus:outline-none focus:border-accent-indigo focus:ring-2 focus:ring-accent-indigo/30 transition-all shadow-inner font-medium">
+                <button type="submit" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-indigo to-accent-purple hover:from-blue-600 hover:to-indigo-600 text-white flex items-center justify-center transition-all flex-shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] hover:scale-105 active:scale-95 group">
+                    <i class="fa-solid fa-paper-plane text-sm group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
                 </button>
             </form>
         </div>
@@ -472,11 +519,13 @@
                 window.aiChatHistory.push({role: 'user', content: message});
                 
                 aiChatMessages.innerHTML += `
-                    <div class="flex items-start gap-3 flex-row-reverse">
-                        <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-white flex-shrink-0 mt-1 shadow-sm transition-colors">
-                            <i class="fa-solid fa-user text-xs"></i>
+                    <div class="flex items-start gap-4 flex-row-reverse relative z-10">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-indigo via-accent-purple to-accent-teal p-[2px] shadow-sm flex-shrink-0 mt-1">
+                            <div class="w-full h-full rounded-full bg-white dark:bg-premium-900 flex items-center justify-center text-premium-900 dark:text-white font-black">
+                                <i class="fa-solid fa-user text-xs"></i>
+                            </div>
                         </div>
-                        <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[80%]">
+                        <div class="bg-gradient-to-r from-accent-indigo to-blue-600 text-white p-4 rounded-2xl rounded-tr-sm text-sm shadow-md max-w-[85%] font-medium">
                             ${message}
                         </div>
                     </div>
@@ -486,12 +535,12 @@
                 
                 const responseId = 'resp-' + Date.now();
                 aiChatMessages.innerHTML += `
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1">
-                            <i class="fa-solid fa-robot text-xs"></i>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="w-10 h-10 rounded-full bg-accent-indigo/10 dark:bg-accent-indigo/20 border border-accent-indigo/20 flex items-center justify-center text-accent-indigo dark:text-blue-400 flex-shrink-0 mt-1 shadow-sm">
+                            <i class="fa-solid fa-robot text-sm animate-pulse"></i>
                         </div>
-                        <div id="${responseId}" class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm border border-slate-200 dark:border-slate-700 shadow-sm max-w-[80%] leading-relaxed markdown-body transition-colors">
-                            <i class="fa-solid fa-circle-notch fa-spin"></i> Grok is thinking...
+                        <div id="${responseId}" class="bg-premium-50 dark:bg-premium-800 text-premium-800 dark:text-premium-200 p-4 rounded-2xl rounded-tl-sm text-sm border border-premium-200/50 dark:border-premium-700/50 shadow-sm max-w-[85%] leading-relaxed markdown-body transition-colors font-medium">
+                            <i class="fa-solid fa-circle-notch fa-spin text-accent-indigo"></i> Grok is analyzing...
                         </div>
                     </div>
                 `;
