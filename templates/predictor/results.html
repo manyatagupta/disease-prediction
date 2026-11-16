@@ -246,22 +246,12 @@
         const downloadPdfBtn = document.getElementById('downloadPdfBtn');
         if (downloadPdfBtn) {
             downloadPdfBtn.addEventListener('click', () => {
-                const element = document.getElementById('resultData');
-                const btnContainer = document.getElementById('actionButtons');
-                const opt = {
-                    margin:       10,
-                    filename:     `MediPredict_Report_{{ predicted_disease|slugify }}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-                
-                // Hide buttons
-                btnContainer.style.display = 'none';
-                
-                html2pdf().set(opt).from(element).save().then(() => {
-                    btnContainer.style.display = 'grid'; // restore
-                });
+                {% if prediction_id %}
+                // Directly download official high-resolution clinical PDF report generated on server
+                window.location.href = "{% url 'predictor:download_report' prediction_id %}";
+                {% else %}
+                window.print();
+                {% endif %}
             });
         }
         
