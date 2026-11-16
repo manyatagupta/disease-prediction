@@ -27,9 +27,9 @@ def make_prediction(selected_symptoms):
     if clf is None or all_symptoms is None:
         raise PredictionError('Error: ML prediction model is not loaded. Please contact support.')
         
-    # Prepare input vector
-    formatted_selected = [s.replace("_", " ").title() for s in selected_symptoms]
-    input_data = [1 if s in formatted_selected else 0 for s in all_symptoms]
+    # Prepare input vector with case-insensitive, normalized matching
+    normalized_selected = set(s.replace("_", " ").strip().lower() for s in selected_symptoms)
+    input_data = [1 if s.replace("_", " ").strip().lower() in normalized_selected else 0 for s in all_symptoms]
     input_df = pd.DataFrame([input_data], columns=all_symptoms)
     
     # Predict
@@ -40,8 +40,7 @@ def make_prediction(selected_symptoms):
     class_probs.sort(key=lambda x: x[1], reverse=True)
     top_5 = class_probs[:5]
     
-    # We no longer normalize top 5 probabilities as we are using CalibratedClassifierCV
-    # which gives us true confidence scores directly.
+    # Calibrated confidence scores directly
     confidence_score = round(top_5[0][1] * 100, 2)
     low_confidence_warning = confidence_score < 30.0
     
@@ -49,9 +48,10 @@ def make_prediction(selected_symptoms):
     key_symptoms = []
     if feature_importances:
         selected_importances = []
-        for s in formatted_selected:
-            if s in feature_importances:
-                selected_importances.append({'name': s, 'importance': feature_importances[s]})
+        for s in all_symptoms:
+            norm_s = s.replace("_", " ").strip().lower()
+            if norm_s in normalized_selected and s in feature_importances:
+                selected_importances.append({'name': s.title(), 'importance': feature_importances[s]})
         
         # Sort by importance descending
         selected_importances.sort(key=lambda x: x['importance'], reverse=True)

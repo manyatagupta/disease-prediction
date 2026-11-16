@@ -25,6 +25,8 @@ class PredictorConfig(AppConfig):
                 
                 if os.path.exists(importances_path):
                     PredictorConfig.feature_importances = joblib.load(importances_path)
+                elif hasattr(PredictorConfig.ml_model, 'feature_importances_'):
+                    PredictorConfig.feature_importances = dict(zip(PredictorConfig.all_symptoms, PredictorConfig.ml_model.feature_importances_))
                 else:
                     print("Warning: Feature importances not found.")
                     
