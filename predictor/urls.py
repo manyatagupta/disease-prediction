@@ -13,4 +13,5 @@ urlpatterns = [
     path('ai/chat/', ai_views.chat_with_grok, name='chat_with_grok'),
     path('ai/analyze/', ai_views.analyze_report, name='analyze_report'),
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
+    path('report/<int:prediction_id>/pdf/', views.download_report_pdf, name='download_report'),
 ]
