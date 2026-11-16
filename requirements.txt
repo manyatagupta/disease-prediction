@@ -16,3 +16,4 @@ whitenoise
 python-dotenv
 groq
 PyPDF2
+reportlab
