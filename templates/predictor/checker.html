@@ -502,22 +502,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     const newPdfBtn = downloadPdfBtn.cloneNode(true);
                     downloadPdfBtn.parentNode.replaceChild(newPdfBtn, downloadPdfBtn);
                     newPdfBtn.addEventListener('click', () => {
-                        const element = document.getElementById('resultData');
-                        const opt = {
-                            margin:       10,
-                            filename:     `MediPredict_Report_${data.predicted_disease.replace(/\s+/g, '_')}.pdf`,
-                            image:        { type: 'jpeg', quality: 0.98 },
-                            html2canvas:  { scale: 2, useCORS: true },
-                            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                        };
-                        
-                        // Temporarily hide buttons for PDF
-                        const btnContainer = newPdfBtn.parentElement;
-                        btnContainer.style.display = 'none';
-                        
-                        html2pdf().set(opt).from(element).save().then(() => {
-                            btnContainer.style.display = 'grid'; // restore
-                        });
+                        if (data.prediction_id) {
+                            window.location.href = `/report/${data.prediction_id}/pdf/`;
+                        } else {
+                            window.print();
+                        }
                     });
                 }
 
