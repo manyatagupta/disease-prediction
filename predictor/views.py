@@ -108,7 +108,14 @@ def checker_view(request):
             'selected_symptoms': selected_symptoms,
             'top_3': results['top_3'],
             'key_symptoms': results['key_symptoms'],
-            'prediction_id': prediction_id
+            'prediction_id': prediction_id,
+            'is_emergency': results.get('is_emergency', False),
+            'emergency_level': results.get('emergency_level', 'STANDARD'),
+            'emergency_flags': results.get('emergency_flags', []),
+            'emergency_instructions': results.get('emergency_instructions', ''),
+            'risk_tier': results.get('risk_tier', 'MODERATE'),
+            'urgency_timeframe': results.get('urgency_timeframe', 'Within 2 to 3 Days'),
+            'risk_summary': results.get('risk_summary', '')
         }
         
         # Check if request is AJAX
@@ -128,7 +135,14 @@ def checker_view(request):
                 'chart_labels': json_lib.loads(results['chart_labels']),
                 'chart_data': json_lib.loads(results['chart_data']),
                 'top_3': results['top_3'],
-                'key_symptoms': results['key_symptoms']
+                'key_symptoms': results['key_symptoms'],
+                'is_emergency': results.get('is_emergency', False),
+                'emergency_level': results.get('emergency_level', 'STANDARD'),
+                'emergency_flags': results.get('emergency_flags', []),
+                'emergency_instructions': results.get('emergency_instructions', ''),
+                'risk_tier': results.get('risk_tier', 'MODERATE'),
+                'urgency_timeframe': results.get('urgency_timeframe', 'Within 2 to 3 Days'),
+                'risk_summary': results.get('risk_summary', '')
             })
             
         return render(request, 'predictor/results.html', context)
