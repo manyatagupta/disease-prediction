@@ -135,6 +135,7 @@
                             <div class="flex flex-wrap items-center gap-3 mb-3">
                                 <span class="px-4 py-1.5 bg-accent-indigo/10 text-accent-indigo dark:text-blue-400 text-xs font-black uppercase tracking-widest rounded-xl border border-accent-indigo/20 transition-colors">AI Prediction</span>
                                 <span id="resSeverity" class="px-4 py-1.5 bg-accent-amber/10 text-accent-amber dark:text-amber-400 text-xs font-black uppercase tracking-widest rounded-xl border border-accent-amber/20 transition-colors">Moderate</span>
+                                <span id="resRiskTier" class="px-4 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black uppercase tracking-widest rounded-xl border border-emerald-500/20 transition-colors">Risk: Low</span>
                             </div>
                             <h2 id="resDisease" class="text-4xl md:text-5xl font-black text-premium-900 dark:text-white transition-colors tracking-tight">Disease Name</h2>
                         </div>
@@ -143,6 +144,42 @@
                                 <span id="resConfidence" class="text-3xl font-black text-accent-teal dark:text-emerald-400">98%</span>
                             </div>
                             <div class="text-[11px] text-premium-500 mt-4 font-black tracking-widest">CONFIDENCE</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Critical Emergency Triage Alert -->
+                    <div id="resEmergencyAlert" class="hidden mb-8 p-6 rounded-[2rem] bg-gradient-to-r from-red-600/15 via-rose-500/10 to-red-600/15 border-2 border-red-500/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden backdrop-blur-md">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-red-600 text-white rounded-2xl shadow-lg shadow-red-600/40 animate-bounce shrink-0">
+                                <i class="fa-solid fa-truck-medical text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2.5 py-0.5 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-md">Critical Triage Notice</span>
+                                    <span id="resEmergencyTimeframe" class="text-xs font-bold text-red-600 dark:text-red-400">Immediate Care Required</span>
+                                </div>
+                                <h4 id="resEmergencyInstructions" class="text-base font-black text-red-700 dark:text-red-300 tracking-tight mb-2"></h4>
+                                <div id="resEmergencyFlags" class="flex flex-wrap gap-2"></div>
+                            </div>
+                        </div>
+                        <a href="tel:911" class="whitespace-nowrap px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl shadow-lg shadow-red-600/30 transition-all hover:scale-105 flex items-center gap-2 text-xs uppercase tracking-wider shrink-0">
+                            <i class="fa-solid fa-phone-volume"></i> Call 911 / 112
+                        </a>
+                    </div>
+
+                    <!-- Clinical Risk Profile Card -->
+                    <div id="resRiskSummaryCard" class="mb-8 p-5 rounded-2xl bg-white/60 dark:bg-premium-800/40 border border-premium-200/50 dark:border-premium-700/50 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-md">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 bg-accent-indigo/10 text-accent-indigo dark:text-blue-400 rounded-xl text-xl font-black">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] font-black uppercase tracking-wider text-premium-500 dark:text-premium-400">Action Recommendation</div>
+                                <div id="resUrgencyTimeframe" class="text-sm font-bold text-premium-900 dark:text-white">Within 2 to 3 Days</div>
+                            </div>
+                        </div>
+                        <div id="resRiskSummaryText" class="text-xs text-premium-600 dark:text-premium-300 font-medium md:text-right max-w-sm">
+                            Schedule an outpatient consultation with a healthcare provider.
                         </div>
                     </div>
                     
@@ -364,6 +401,51 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById('resDescription').textContent = data.description;
                 document.getElementById('resPrecautions').textContent = data.precautions;
                 document.getElementById('resSpecialist').textContent = data.specialist;
+                
+                // Risk Tier badge
+                const riskEl = document.getElementById('resRiskTier');
+                if (riskEl) {
+                    riskEl.textContent = `Risk: ${data.risk_tier || 'Moderate'}`;
+                    riskEl.className = 'px-4 py-1.5 text-xs font-black uppercase tracking-widest rounded-xl border transition-colors ';
+                    if (data.risk_tier === 'CRITICAL') {
+                        riskEl.classList.add('bg-rose-500/20', 'text-rose-600', 'border-rose-500/30', 'animate-pulse');
+                    } else if (data.risk_tier === 'HIGH') {
+                        riskEl.classList.add('bg-orange-500/20', 'text-orange-600', 'border-orange-500/30');
+                    } else if (data.risk_tier === 'MODERATE') {
+                        riskEl.classList.add('bg-amber-500/20', 'text-amber-600', 'border-amber-500/30');
+                    } else {
+                        riskEl.classList.add('bg-emerald-500/20', 'text-emerald-600', 'border-emerald-500/30');
+                    }
+                }
+                
+                // Urgency & Risk summary card
+                const urgencyEl = document.getElementById('resUrgencyTimeframe');
+                if (urgencyEl) urgencyEl.textContent = data.urgency_timeframe || 'Within 2 to 3 Days';
+                const summaryEl = document.getElementById('resRiskSummaryText');
+                if (summaryEl) summaryEl.textContent = data.risk_summary || 'Outpatient consultation recommended.';
+                
+                // Emergency Triage Alert
+                const emAlert = document.getElementById('resEmergencyAlert');
+                if (emAlert) {
+                    if (data.is_emergency) {
+                        emAlert.classList.remove('hidden');
+                        document.getElementById('resEmergencyInstructions').textContent = data.emergency_instructions;
+                        document.getElementById('resEmergencyTimeframe').textContent = data.urgency_timeframe;
+                        const flagContainer = document.getElementById('resEmergencyFlags');
+                        flagContainer.innerHTML = '';
+                        if (data.emergency_flags && data.emergency_flags.length > 0) {
+                            data.emergency_flags.forEach(flag => {
+                                flagContainer.innerHTML += `
+                                    <span class="px-3 py-1 bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-200 text-xs font-bold rounded-lg border border-red-300 dark:border-red-800/60 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-exclamation text-red-600"></i> ${flag.flag}
+                                    </span>
+                                `;
+                            });
+                        }
+                    } else {
+                        emAlert.classList.add('hidden');
+                    }
+                }
                 
                 if (data.low_confidence) {
                     document.getElementById('resWarning').classList.remove('hidden');
