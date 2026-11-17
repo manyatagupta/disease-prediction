@@ -51,6 +51,134 @@ EMERGENCY_RED_FLAGS = [
     }
 ]
 
+# Common Clinical Synonyms & Colloquial Symptom Terms
+COMMON_SYNONYMS = {
+    'tummy ache': 'lower abdominal pain',
+    'stomach ache': 'lower abdominal pain',
+    'belly pain': 'lower abdominal pain',
+    'stomach pain': 'lower abdominal pain',
+    'abdominal ache': 'sharp abdominal pain',
+    'abdominal pain': 'sharp abdominal pain',
+    'throwing up': 'vomiting',
+    'threw up': 'vomiting',
+    'puking': 'vomiting',
+    'nauseated': 'nausea',
+    'heart palpitation': 'palpitations',
+    'racing heart': 'palpitations',
+    'short breath': 'shortness of breath',
+    'breathless': 'shortness of breath',
+    'breathlessness': 'shortness of breath',
+    'hard to breathe': 'shortness of breath',
+    'difficulty breathing': 'shortness of breath',
+    'loose motions': 'diarrhea',
+    'watery stools': 'diarrhea',
+    'tiredness': 'fatigue',
+    'exhaustion': 'fatigue',
+    'tired': 'fatigue',
+    'body ache': 'muscle pain',
+    'body aches': 'muscle pain',
+    'muscle aches': 'muscle pain',
+    'joint aches': 'joint pain',
+    'head ache': 'headache',
+    'severe headache': 'headache',
+    'high temperature': 'fever',
+    'feverish': 'fever',
+    'chills': 'chills',
+    'coughing': 'cough',
+    'phlegm': 'sputum',
+    'dizzy': 'dizziness',
+    'lightheaded': 'dizziness',
+    'lightheadedness': 'dizziness',
+    'runny nose': 'nasal congestion',
+    'stuffy nose': 'nasal congestion',
+    'throat ache': 'sore throat',
+    'itchy skin': 'itching',
+    'itchiness': 'itching',
+    'rashes': 'skin rash',
+    'rash': 'skin rash',
+    'chest pressure': 'chest tightness',
+    'burning chest': 'sharp chest pain',
+}
+
+
+def normalize_symptom_name(raw_name):
+    """
+    Cleans, strips, and removes punctuation from a symptom string.
+    """
+    s = re.sub(r'[^\w\s]', ' ', raw_name or '')
+    return re.sub(r'\s+', ' ', s).strip().lower()
+
+
+def resolve_symptoms(selected_symptoms, all_symptoms):
+    """
+    Resolves input symptoms against the model's feature set using:
+    1. Direct normalized match
+    2. Common synonym mapping
+    3. Fuzzy string matching (difflib)
+    Returns:
+      - matched_features: set of matched feature names in all_symptoms
+      - resolutions: list of tuples (original, resolved_feature, match_type)
+    """
+    all_symptoms_norm = {normalize_symptom_name(s): s for s in all_symptoms}
+    matched_features = set()
+    resolutions = []
+
+    for sym in selected_symptoms:
+        norm = normalize_symptom_name(sym)
+        if not norm:
+            continue
+
+        # 1. Direct match
+        if norm in all_symptoms_norm:
+            matched_feature = all_symptoms_norm[norm]
+            matched_features.add(matched_feature)
+            resolutions.append((sym, matched_feature, 'exact'))
+            continue
+
+        # 2. Synonym match
+        synonym_target = COMMON_SYNONYMS.get(norm)
+        if synonym_target and normalize_symptom_name(synonym_target) in all_symptoms_norm:
+            matched_feature = all_symptoms_norm[normalize_symptom_name(synonym_target)]
+            matched_features.add(matched_feature)
+            resolutions.append((sym, matched_feature, 'synonym'))
+            continue
+
+        # 3. Fuzzy match
+        close_matches = difflib.get_close_matches(norm, list(all_symptoms_norm.keys()), n=1, cutoff=0.72)
+        if close_matches:
+            matched_feature = all_symptoms_norm[close_matches[0]]
+            matched_features.add(matched_feature)
+            resolutions.append((sym, matched_feature, 'fuzzy'))
+        else:
+            # Substring fallback
+            found_sub = None
+            for cand_norm, orig_feat in all_symptoms_norm.items():
+                if norm in cand_norm or cand_norm in norm:
+                    found_sub = orig_feat
+                    break
+            if found_sub:
+                matched_features.add(found_sub)
+                resolutions.append((sym, found_sub, 'substring'))
+            else:
+                # Token overlap fallback
+                norm_words = set(norm.split())
+                best_cand = None
+                best_overlap = 0
+                for cand_norm, orig_feat in all_symptoms_norm.items():
+                    cand_words = set(cand_norm.split())
+                    overlap = len(norm_words & cand_words)
+                    if overlap > best_overlap:
+                        best_overlap = overlap
+                        best_cand = orig_feat
+                if best_overlap >= 1 and (best_overlap >= len(norm_words) * 0.5 or best_overlap >= 2):
+                    matched_features.add(best_cand)
+                    resolutions.append((sym, best_cand, 'token_overlap'))
+                else:
+                    resolutions.append((sym, None, 'unmatched'))
+
+    return matched_features, resolutions
+
+
 def evaluate_emergency_triage(selected_symptoms):
     """
     Evaluates patient symptoms against clinical emergency red flags.
@@ -106,8 +234,8 @@ def make_prediction(selected_symptoms):
     feature_importances = PredictorConfig.feature_importances
     if clf is None or all_symptoms is None:
         raise PredictionError('Error: ML prediction model is not loaded. Please contact support.')
-    normalized_selected = set(s.replace('_', ' ').strip().lower() for s in selected_symptoms)
-    input_data = [1 if s.replace('_', ' ').strip().lower() in normalized_selected else 0 for s in all_symptoms]
+    matched_features, resolutions = resolve_symptoms(selected_symptoms, all_symptoms)
+    input_data = [1 if s in matched_features else 0 for s in all_symptoms]
     input_df = pd.DataFrame([input_data], columns=all_symptoms)
     predicted_disease = clf.predict(input_df)[0]
     probabilities = clf.predict_proba(input_df)[0]
@@ -118,7 +246,7 @@ def make_prediction(selected_symptoms):
     low_confidence_warning = confidence_score < 30.0
     key_symptoms = []
     if feature_importances:
-        selected_importances = [{'name': s.title(), 'importance': feature_importances[s]} for s in all_symptoms if s.replace('_', ' ').strip().lower() in normalized_selected and s in feature_importances]
+        selected_importances = [{'name': s.title(), 'importance': feature_importances[s]} for s in all_symptoms if s in matched_features and s in feature_importances]
         selected_importances.sort(key=lambda x: x['importance'], reverse=True)
         key_symptoms = selected_importances[:3]
     top_3 = []
@@ -130,4 +258,4 @@ def make_prediction(selected_symptoms):
     chart_labels = json.dumps([x[0] for x in top_5])
     chart_data = json.dumps([round(x[1] * 100, 2) for x in top_5])
     disease_obj = Disease.objects.filter(name=predicted_disease).first()
-    return {'predicted_disease': predicted_disease, 'confidence_score': confidence_score, 'disease_obj': disease_obj, 'top_3': top_3, 'chart_labels': chart_labels, 'chart_data': chart_data, 'low_confidence_warning': low_confidence_warning, 'key_symptoms': key_symptoms}
+    return {'predicted_disease': predicted_disease, 'confidence_score': confidence_score, 'disease_obj': disease_obj, 'top_3': top_3, 'chart_labels': chart_labels, 'chart_data': chart_data, 'low_confidence_warning': low_confidence_warning, 'key_symptoms': key_symptoms, 'resolved_symptoms_count': len(matched_features)}
