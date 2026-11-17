@@ -290,6 +290,12 @@ def generate_prediction_pdf(history_item, request_user=None):
     differential_list = []
     key_symptoms = []
     low_confidence_flag = confidence_score < 40.0
+    is_emergency = False
+    emergency_level = 'STANDARD'
+    emergency_flags = []
+    emergency_instructions = ''
+    risk_tier = 'MODERATE'
+    urgency_timeframe = 'Within 2 to 3 Days'
 
     try:
         pred_res = make_prediction(raw_symptoms)
@@ -297,6 +303,12 @@ def generate_prediction_pdf(history_item, request_user=None):
             differential_list = pred_res.get('top_3', [])
             key_symptoms = pred_res.get('key_symptoms', [])
             low_confidence_flag = pred_res.get('low_confidence_warning', low_confidence_flag)
+            is_emergency = pred_res.get('is_emergency', False)
+            emergency_level = pred_res.get('emergency_level', 'STANDARD')
+            emergency_flags = pred_res.get('emergency_flags', [])
+            emergency_instructions = pred_res.get('emergency_instructions', '')
+            risk_tier = pred_res.get('risk_tier', 'MODERATE')
+            urgency_timeframe = pred_res.get('urgency_timeframe', 'Within 2 to 3 Days')
     except Exception:
         # Fallback if prediction model cannot be re-executed
         differential_list = [
@@ -385,14 +397,15 @@ def generate_prediction_pdf(history_item, request_user=None):
     # ---------------------------------------------------------
     # 3. PRIMARY DIAGNOSTIC FINDING (HERO CARD)
     # ---------------------------------------------------------
+    risk_color = '#b91c1c' if risk_tier == 'CRITICAL' else ('#ea580c' if risk_tier == 'HIGH' else ('#d97706' if risk_tier == 'MODERATE' else '#059669'))
     hero_left = [
         Paragraph("PRIMARY PREDICTED CONDITION", styles['condition_hero_label']),
         Spacer(1, 2),
         Paragraph(predicted_disease.title(), styles['condition_hero_title']),
         Spacer(1, 4),
         Paragraph(
-            f"<b>Recommended Specialist:</b> <font color='#1e3a8a'>{specialist}</font> &nbsp;&nbsp;|&nbsp;&nbsp; "
-            f"<b>Severity Tier:</b> {severity}",
+            f"<b>Specialist:</b> <font color='#1e3a8a'>{specialist}</font> &nbsp;|&nbsp; "
+            f"<b>Risk Tier:</b> <font color='{risk_color}'><b>{risk_tier}</b></font> ({urgency_timeframe})",
             styles['body_text']
         )
     ]
@@ -422,6 +435,26 @@ def generate_prediction_pdf(history_item, request_user=None):
         ('RIGHTPADDING', (0, 0), (-1, -1), 10),
     ]))
     story.append(hero_table)
+
+    # Emergency Triage Warning Box if Critical/Urgent
+    if is_emergency:
+        story.append(Spacer(1, 4))
+        flag_bullets = " &nbsp;•&nbsp; ".join([f['flag'] for f in emergency_flags])
+        em_text = (
+            f"<font color='#b91c1c' size='8'><b>EMERGENCY TRIAGE NOTICE ({emergency_level}):</b> {emergency_instructions}</font><br/>"
+            f"<font color='#7f1d1d' size='7.5'><b>Identified Red Flags:</b> {flag_bullets}</font>"
+        )
+        em_table = Table([[Paragraph(em_text, styles['body_text'])]], colWidths=[printable_width])
+        em_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#fef2f2')),
+            ('BOX', (0, 0), (-1, -1), 0.75, colors.HexColor('#fca5a5')),
+            ('LINEBEFORE', (0, 0), (0, -1), 3.5, colors.HexColor('#dc2626')),
+            ('TOPPADDING', (0, 0), (-1, -1), 5),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        story.append(em_table)
 
     # Low confidence advisory if needed
     if low_confidence_flag:
